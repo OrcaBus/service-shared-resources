@@ -2,16 +2,13 @@
 
 ## Overview
 
-The root of the project is an AWS CDK project where the main application logic lives inside the `./app` folder.
+This repository is designed to deploy resources that can be reused or shared by different microservices across all AWS accounts (beta, gamma, prod, and toolchain).
 
 ## Project Structure
 
 The project is organized into the following key directories:
 
-
-
-- **`./bin/deploy.ts`**: Serves as the entry point of the application. It initializes two root stacks: `stateless` and `stateful`. You can remove one of these if your service does not require it.
-
+- **`./bin/deploy.ts`**: Serves as the entry point of the application.
 - **`./infrastructure`**: Contains the infrastructure code for the project:
 - **`./infrastructure/toolchain`**: Contains stacks for resources deployed in the toolchain account, including:
   - **Stateless and stateful stacks** for setting up CodePipeline and related resources for cross-environment deployments.
