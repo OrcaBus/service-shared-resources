@@ -56,7 +56,10 @@ You can access CDK commands using the `pnpm` wrapper script.
 
 This template provides two types of CDK entry points:
 
-- **`cdk-toolchain-bootstrap`**: Used to deploy the bootstrap stack containing foundational, one-time setup resources required by the toolchain account (e.g., artifact buckets, IAM roles). This should be run only once per toolchain account, typically before deploying any other stacks.
+- **`cdk-toolchain-bootstrap`**: Used to deploy the bootstrap stack containing foundational, one-time setup resources
+  required by the toolchain account (e.g., artifact buckets, KMS keys). This should be run only once per toolchain account,
+  typically before deploying any other stacks.
+Note: This stack is currently deployed manually whenever changes are made to it.
 - **`cdk-stateful`**: Used to deploy stacks containing stateful resources (e.g., AWS DynamoDB, AWS RDS), where redeployment may not be ideal due to potential side effects.
 
 The type of stack to deploy is determined by the context set in the `./bin/deploy.ts` file. This ensures the correct stack is executed based on the provided context.
