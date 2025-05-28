@@ -2,21 +2,21 @@
 
 ## Overview
 
-The root of the project is an AWS CDK project where the main application logic lives inside the `./app` folder.
+This repository is designed to deploy resources that can be reused or shared by different microservices across all AWS accounts (beta, gamma, prod, and toolchain).
 
 ## Project Structure
 
 The project is organized into the following key directories:
 
-- **`./app`**: Contains the main application logic. You can open the code editor directly in this folder, and the application should run independently.
-
-- **`./bin/deploy.ts`**: Serves as the entry point of the application. It initializes two root stacks: `stateless` and `stateful`. You can remove one of these if your service does not require it.
-
+- **`./bin/deploy.ts`**: Serves as the entry point of the application.
 - **`./infrastructure`**: Contains the infrastructure code for the project:
-  - **`./infrastructure/toolchain`**: Includes stacks for the stateless and stateful resources deployed in the toolchain account. These stacks primarily set up the CodePipeline for cross-environment deployments.
+- **`./infrastructure/toolchain`**: Contains stacks for resources deployed in the toolchain account, including:
+  - **Stateless and stateful stacks** for setting up CodePipeline and related resources for cross-environment deployments.
+    - **Bootstrap stack** for one-time setup tasks required by the toolchain account (e.g., artifact buckets, roles).
   - **`./infrastructure/stage`**: Defines the stage stacks for different environments:
     - **`./infrastructure/stage/config.ts`**: Contains environment-specific configuration files (e.g., `beta`, `gamma`, `prod`).
-    - **`./infrastructure/stage/stack.ts`**: The CDK stack entry point for provisioning resources required by the application in `./app`.
+    - **`./infrastructure/stage/stack.ts`**: The CDK stack entry point for provisioning resources required for the
+      shared resource in its respective account.
 
 - **`.github/workflows/pr-tests.yml`**: Configures GitHub Actions to run tests for `make check` (linting and code style), tests defined in `./test`, and `make test` for the `./app` directory. Modify this file as needed to ensure the tests are properly configured for your environment.
 
@@ -54,9 +54,12 @@ Before using this template, search for all instances of `TODO:` comments in the 
 
 You can access CDK commands using the `pnpm` wrapper script.
 
-This template provides two types of CDK entry points: `cdk-stateless` and `cdk-stateful`.
+This template provides two types of CDK entry points:
 
-- **`cdk-stateless`**: Used to deploy stacks containing stateless resources (e.g., AWS Lambda), which can be easily redeployed without side effects.
+- **`cdk-toolchain-bootstrap`**: Used to deploy the bootstrap stack containing foundational, one-time setup resources
+  required by the toolchain account (e.g., artifact buckets, KMS keys). This should be run only once per toolchain account,
+  typically before deploying any other stacks.
+Note: This stack is currently deployed manually whenever changes are made to it.
 - **`cdk-stateful`**: Used to deploy stacks containing stateful resources (e.g., AWS DynamoDB, AWS RDS), where redeployment may not be ideal due to potential side effects.
 
 The type of stack to deploy is determined by the context set in the `./bin/deploy.ts` file. This ensures the correct stack is executed based on the provided context.
@@ -64,30 +67,26 @@ The type of stack to deploy is determined by the context set in the `./bin/deplo
 For example:
 
 ```sh
-# Deploy a stateless stack
-pnpm cdk-stateless <command>
+pnpm cdk-toolchain-bootstrap <command>
 
-# Deploy a stateful stack
 pnpm cdk-stateful <command>
 ```
 
 ### Stacks
 
-This CDK project manages multiple stacks. The root stack (the only one that does not include `DeploymentPipeline` in its stack ID) is deployed in the toolchain account and sets up a CodePipeline for cross-environment deployments to `beta`, `gamma`, and `prod`.
+Currently, this CDK project provides a single stack: `OrcaBusToolchainBootstrapStack`.
+This stack bootstraps the toolchain account with foundational resources (such as artifact buckets) required before deploying any other OrcaBus resources.
 
-To list all available stacks, run:
+To list available stacks, run:
 
 ```sh
-pnpm cdk-stateless ls
+pnpm cdk-toolchain-bootstrap ls
 ```
 
 Example output:
 
 ```sh
-OrcaBusStatelessServiceStack
-OrcaBusStatelessServiceStack/DeploymentPipeline/OrcaBusBeta/DeployStack (OrcaBusBeta-DeployStack)
-OrcaBusStatelessServiceStack/DeploymentPipeline/OrcaBusGamma/DeployStack (OrcaBusGamma-DeployStack)
-OrcaBusStatelessServiceStack/DeploymentPipeline/OrcaBusProd/DeployStack (OrcaBusProd-DeployStack)
+OrcaBusToolchainBootstrapStack
 ```
 
 ## Linting and Formatting

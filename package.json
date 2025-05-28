@@ -1,13 +1,13 @@
 {
   "name": "template-service-base",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "tsc && jest",
     "cdk": "cdk",
-    "cdk-stateless": "cdk -c deployMode=stateless",
     "cdk-stateful": "cdk -c deployMode=stateful",
+    "cdk-toolchain-bootstrap": "cdk -c deployMode=toolchainBootstrap",
     "prepare": "pre-commit install",
     "prettier": "prettier --check .",
     "prettier-fix": "prettier --write .",
@@ -38,8 +38,8 @@
     "typescript-eslint": "^8.28.0"
   },
   "dependencies": {
+    "@orcabus/platform-cdk-constructs": "0.0.7",
     "aws-cdk-lib": "^2.195.0",
-    "constructs": "^10.4.2",
-    "@orcabus/platform-cdk-constructs": "0.0.6"
+    "constructs": "^10.4.2"
   }
 }
