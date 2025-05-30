@@ -13,13 +13,9 @@ if (!deployMode) {
 }
 
 if (deployMode === 'stateful') {
-  new StatefulStack(
-    app,
-    /* TODO: Replace with string. Example: */ 'OrcaBusStateful{ServiceName}Stack',
-    {
-      env: TOOLCHAIN_ENVIRONMENT,
-    }
-  );
+  new StatefulStack(app, 'OrcaBusStatefulSharedStack', {
+    env: TOOLCHAIN_ENVIRONMENT,
+  });
 } else if (deployMode === 'toolchainBootstrap') {
   new ToolchainBootstrapStack(app, 'OrcaBusToolchainBootstrapStack', {
     env: TOOLCHAIN_ENVIRONMENT,
