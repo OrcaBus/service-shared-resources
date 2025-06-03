@@ -46,7 +46,9 @@ export class UniversalEventArchiverConstruct extends Construct {
 
     archiveBucket.grantPut(archiveEventFunction);
 
-    const rule = new Rule(this, 'EventRule', {
+    // We should not do "this.id + 'EventRule'" as the construct Id
+    // But changing this will need to replace the rule and it will cause name clash issue
+    const rule = new Rule(this, this.id + 'EventRule', {
       ruleName: 'UniversalEventArchiverRule',
       description: 'Rule to archive all events to S3',
       eventBus,
