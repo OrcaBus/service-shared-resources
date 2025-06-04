@@ -2,7 +2,8 @@ import { App, Aspects, Stack } from 'aws-cdk-lib';
 import { Annotations, Match } from 'aws-cdk-lib/assertions';
 import { SynthesisMessage } from 'aws-cdk-lib/cx-api';
 import { AwsSolutionsChecks, NagSuppressions } from 'cdk-nag';
-import { DeployStack } from '../infrastructure/stage/deployment-stack';
+import { SharedStack } from '../infrastructure/stage/stack';
+import { getSharedStackProps } from '../infrastructure/stage/config';
 
 function synthesisMessageToString(sm: SynthesisMessage): string {
   return `${sm.entry.data} [${sm.id}]`;
@@ -12,9 +13,12 @@ describe('cdk-nag-stateless-toolchain-stack', () => {
   const app = new App({});
 
   // You should configure all stack (sateless, stateful) to be tested
-  const deployStack = new DeployStack(app, 'DeployStack', {
-    // Pick the prod environment to test as it is the most strict
-    // ...getStackProps('PROD'),
+  const deployStack = new SharedStack(app, 'SharedStack', {
+    ...getSharedStackProps('PROD'),
+    env: {
+      account: '123456789',
+      region: 'ap-southeast-2',
+    },
   });
 
   Aspects.of(deployStack).add(new AwsSolutionsChecks());
@@ -40,16 +44,50 @@ describe('cdk-nag-stateless-toolchain-stack', () => {
  * @param stack
  */
 function applyNagSuppression(stack: Stack) {
-  // These are example suppressions for this stack and should be removed and replaced with the
-  // service-specific suppressions of your app.
   NagSuppressions.addStackSuppressions(
     stack,
-    [{ id: 'AwsSolutions-S10', reason: 'not require requests to use SSL' }],
+    [{ id: 'AwsSolutions-IAM4', reason: 'Allow AWS managed policies' }],
     true
   );
   NagSuppressions.addStackSuppressions(
     stack,
-    [{ id: 'AwsSolutions-S1', reason: 'this is an example bucket' }],
+    [{ id: 'AwsSolutions-IAM5', reason: 'Allow wildcard permissions' }],
+    true
+  );
+  NagSuppressions.addResourceSuppressionsByPath(
+    stack,
+    ['/SharedStack/EventBusConstruct/UniversalEventArchiveBucket/Resource'],
+    [
+      {
+        id: 'AwsSolutions-S1',
+        reason: 'This is no necessity to retain the server access logs for Event Archiver Bucket.',
+      },
+    ],
+    true
+  );
+  NagSuppressions.addStackSuppressions(
+    stack,
+    [
+      {
+        id: 'AwsSolutions-L1',
+        reason: 'Allow to use non latest runtime version for Lambda functions.',
+      },
+    ],
+    true
+  );
+
+  // Remove this when the resource is removed
+  NagSuppressions.addResourceSuppressionsByPath(
+    stack,
+    '/SharedStack/OrcabusEventDlqFmannotator/Resource',
+    [
+      {
+        id: 'AwsSolutions-SQS3',
+        reason:
+          'it is expected that the DLQ construct has a Queue without a DLQ, because that ' +
+          'queue itself acts as the DLQ for other constructs.',
+      },
+    ],
     true
   );
 }

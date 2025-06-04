@@ -314,6 +314,7 @@ export const getSharedStackProps = (stage: StageName): SharedStackProps => {
     databaseProps: getDatabaseConstructProps(stage),
     computeProps: getComputeConstructProps(),
     eventSourceProps: getEventSourceConstructProps(stage),
+    // On removal also remove the path suppression in ./test/stage.test.ts
     eventDLQProps: getEventDLQConstructProps(),
   };
 };
