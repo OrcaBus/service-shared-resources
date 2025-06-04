@@ -1,9 +1,8 @@
 import { AuroraPostgresEngineVersion } from 'aws-cdk-lib/aws-rds';
 import { SchemaRegistryProps } from './constructs/schema-registry';
-import { StageName } from '@orcabus/platform-cdk-constructs/utils';
+import { StageName } from '@orcabus/platform-cdk-constructs/shared-config/accounts';
 import { SharedStackProps } from './stack';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
-import { VpcLookupOptions } from 'aws-cdk-lib/aws-ec2';
 import { EventBusProps } from './constructs/event-bus';
 import {
   BETA_ENVIRONMENT,
@@ -14,22 +13,28 @@ import { ComputeProps } from './constructs/compute';
 import { EventSourceProps } from './constructs/event-source';
 import { EventDLQProps } from './constructs/event-dlq';
 import { ConfigurableDatabaseProps } from './constructs/database';
-const SHARED_SECURITY_GROUP_NAME = 'OrcaBusSharedComputeSecurityGroup';
+import {
+  SHARED_SECURITY_GROUP_NAME,
+  VPC_LOOKUP_PROPS,
+} from '@orcabus/platform-cdk-constructs/shared-config/networking';
+import {
+  DATA_SCHEMA_REGISTRY_NAME,
+  EVENT_BUS_NAME,
+  EVENT_SCHEMA_REGISTRY_NAME,
+} from '@orcabus/platform-cdk-constructs/shared-config/event-bridge';
+import {
+  DATABASE_PORT,
+  DB_CLUSTER_ENDPOINT_HOST_PARAMETER_NAME,
+  DB_CLUSTER_IDENTIFIER,
+  DB_CLUSTER_RESOURCE_ID_PARAMETER_NAME,
+  RDS_MASTER_SECRET_NAME,
+} from '@orcabus/platform-cdk-constructs/shared-config/database';
 
-const eventSchemaRegistryName = 'orcabus.events';
-const dataSchemaRegistryName = 'orcabus.data';
-const eventBusName = 'OrcaBusMain';
+/* ******
+ * TODO: Remove this to file manager
+ * *****/
+
 const eventSourceQueueName = 'orcabus-event-source-queue';
-
-const vpcName = 'main-vpc';
-const vpcStackName = 'networking';
-const vpcProps: VpcLookupOptions = {
-  vpcName: vpcName,
-  tags: {
-    Stack: vpcStackName,
-  },
-};
-
 const oncoanalyserBucket: Record<StageName, string> = {
   BETA: 'umccr-temp-dev',
   GAMMA: 'umccr-temp-stg',
@@ -78,40 +83,30 @@ const externalProjectBuckets: Record<StageName, string[]> = {
   ],
 };
 
-/**
- * Configuration for resources created in SharedStack
- */
-// Db Construct
-const dbClusterIdentifier = 'orcabus-db';
-const dbClusterResourceIdParameterName = '/orcabus/db-cluster-resource-id';
-const dbClusterEndpointHostParameterName = '/orcabus/db-cluster-endpoint-host';
-const databasePort = 5432;
-const rdsMasterSecretName = 'orcabus/master-rds'; // pragma: allowlist secret
-
 const getEventSchemaRegistryConstructProps = (): SchemaRegistryProps => {
   return {
-    registryName: eventSchemaRegistryName,
-    description: 'Schema Registry for ' + eventSchemaRegistryName,
+    registryName: EVENT_SCHEMA_REGISTRY_NAME,
+    description: 'Schema Registry for ' + EVENT_SCHEMA_REGISTRY_NAME,
   };
 };
 
 const getDataSchemaRegistryConstructProps = (): SchemaRegistryProps => {
   return {
-    registryName: dataSchemaRegistryName,
-    description: 'Schema Registry for ' + dataSchemaRegistryName,
+    registryName: DATA_SCHEMA_REGISTRY_NAME,
+    description: 'Schema Registry for ' + DATA_SCHEMA_REGISTRY_NAME,
   };
 };
 
 const getEventBusConstructProps = (stage: StageName): EventBusProps => {
   const baseConfig = {
-    eventBusName: eventBusName,
+    eventBusName: EVENT_BUS_NAME,
     archiveName: 'OrcaBusMainArchive',
     archiveDescription: 'OrcaBus main event bus archive',
     archiveRetention: 365,
   };
 
   const baseUniversalEventArchiverProps = {
-    vpcProps: vpcProps,
+    vpcProps: VPC_LOOKUP_PROPS,
     lambdaSecurityGroupName: 'OrcaBusSharedEventBusUniversalEventArchiveSecurityGroup',
     bucketRemovalPolicy: RemovalPolicy.DESTROY,
   };
@@ -154,7 +149,7 @@ const getComputeConstructProps = (): ComputeProps => {
   };
 };
 
-export const eventSourcePattern = () => {
+const eventSourcePattern = () => {
   return {
     $or: [
       {
@@ -167,7 +162,7 @@ export const eventSourcePattern = () => {
   };
 };
 
-export const eventSourcePatternCache = () => {
+const eventSourcePatternCache = () => {
   // NOT KEY in cache AND (SIZE > 0 OR NOT KEY ends with "/") expands to
   // (NOT KEY in cache and SIZE > 0) OR (NOT KEY in cache and NOT KEY ends with "/")\
   return {
@@ -183,7 +178,7 @@ export const eventSourcePatternCache = () => {
   };
 };
 
-export const getEventSourceConstructProps = (stage: StageName): EventSourceProps => {
+const getEventSourceConstructProps = (stage: StageName): EventSourceProps => {
   const eventTypes = [
     'Object Created',
     'Object Deleted',
@@ -258,15 +253,15 @@ const getEventDLQConstructProps = (): EventDLQProps[] => {
 
 const getDatabaseConstructProps = (stage: StageName): ConfigurableDatabaseProps => {
   const baseConfig = {
-    clusterIdentifier: dbClusterIdentifier,
+    clusterIdentifier: DB_CLUSTER_IDENTIFIER,
     defaultDatabaseName: 'orcabus',
     version: AuroraPostgresEngineVersion.VER_16_6,
     parameterGroupName: 'default.aurora-postgresql16',
     username: 'postgres',
-    dbPort: databasePort,
-    masterSecretName: rdsMasterSecretName,
-    clusterResourceIdParameterName: dbClusterResourceIdParameterName,
-    clusterEndpointHostParameterName: dbClusterEndpointHostParameterName,
+    dbPort: DATABASE_PORT,
+    masterSecretName: RDS_MASTER_SECRET_NAME,
+    clusterResourceIdParameterName: DB_CLUSTER_RESOURCE_ID_PARAMETER_NAME,
+    clusterEndpointHostParameterName: DB_CLUSTER_ENDPOINT_HOST_PARAMETER_NAME,
     secretRotationSchedule: Duration.days(7),
   };
 
@@ -312,7 +307,7 @@ const getDatabaseConstructProps = (stage: StageName): ConfigurableDatabaseProps 
 
 export const getSharedStackProps = (stage: StageName): SharedStackProps => {
   return {
-    vpcProps,
+    vpcProps: VPC_LOOKUP_PROPS,
     eventSchemaRegistryProps: getEventSchemaRegistryConstructProps(),
     dataSchemaRegistryProps: getDataSchemaRegistryConstructProps(),
     eventBusProps: getEventBusConstructProps(stage),
