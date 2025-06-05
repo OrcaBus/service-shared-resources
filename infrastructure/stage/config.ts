@@ -143,10 +143,30 @@ const getEventBusConstructProps = (stage: StageName): EventBusProps => {
   }
 };
 
-const getComputeConstructProps = (): ComputeProps => {
-  return {
-    securityGroupName: SHARED_SECURITY_GROUP_NAME,
-  };
+const getComputeConstructProps = (stage: StageName): ComputeProps => {
+  // CDK by default generates a description for the security group which contain the construct Id
+  // Since this is deployed in old repo and SG can't be modified (must be replaced),
+  // we need to set a static description following old repo's convention
+  switch (stage) {
+    case 'BETA':
+      return {
+        securityGroupName: SHARED_SECURITY_GROUP_NAME,
+        securityGroupDescription:
+          'OrcaBusStatefulPipeline/OrcaBusBeta/SharedStack/ComputeConstruct/SecurityGroup',
+      };
+    case 'GAMMA':
+      return {
+        securityGroupName: SHARED_SECURITY_GROUP_NAME,
+        securityGroupDescription:
+          'OrcaBusStatefulPipeline/OrcaBusGamma/SharedStack/ComputeConstruct/SecurityGroup',
+      };
+    case 'PROD':
+      return {
+        securityGroupName: SHARED_SECURITY_GROUP_NAME,
+        securityGroupDescription:
+          'OrcaBusStatefulPipeline/OrcaBusProd/SharedStack/ComputeConstruct/SecurityGroup',
+      };
+  }
 };
 
 const eventSourcePattern = () => {
@@ -312,7 +332,7 @@ export const getSharedStackProps = (stage: StageName): SharedStackProps => {
     dataSchemaRegistryProps: getDataSchemaRegistryConstructProps(),
     eventBusProps: getEventBusConstructProps(stage),
     databaseProps: getDatabaseConstructProps(stage),
-    computeProps: getComputeConstructProps(),
+    computeProps: getComputeConstructProps(stage),
     eventSourceProps: getEventSourceConstructProps(stage),
     // On removal also remove the path suppression in ./test/stage.test.ts
     eventDLQProps: getEventDLQConstructProps(),
