@@ -6,6 +6,10 @@ export interface ComputeProps {
    * The security group name for the shared security group
    */
   securityGroupName: string;
+  /**
+   * Security group description for the shared security group
+   */
+  securityGroupDescription: string;
 }
 
 /**
@@ -21,11 +25,7 @@ export class ComputeConstruct extends Construct {
       securityGroupName: props.securityGroupName,
       vpc: vpc,
       allowAllOutbound: true,
-      // June 2025 -  William
-      // CDK by default generates a description for the security group which contain the construct Id
-      // Since this is deployed in old repo and SG can't be modified (must be replaced),
-      // we need to set a static description following old repo's convention
-      description: 'OrcaBusStatefulPipeline/OrcaBusBeta/SharedStack/ComputeConstruct/SecurityGroup',
+      description: props.securityGroupDescription,
     });
 
     this.securityGroup.addIngressRule(
