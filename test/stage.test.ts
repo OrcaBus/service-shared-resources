@@ -2,8 +2,8 @@ import { App, Aspects, Stack } from 'aws-cdk-lib';
 import { Annotations, Match } from 'aws-cdk-lib/assertions';
 import { SynthesisMessage } from 'aws-cdk-lib/cx-api';
 import { AwsSolutionsChecks, NagSuppressions } from 'cdk-nag';
-import { SharedStack } from '../infrastructure/stage/stack';
-import { getSharedStackProps } from '../infrastructure/stage/config';
+import { SharedStack } from '../infrastructure/shared-stack/stage/shared-stack/stack';
+import { getSharedStackProps } from '../infrastructure/shared-stack/stage/shared-stack/config';
 
 function synthesisMessageToString(sm: SynthesisMessage): string {
   return `${sm.entry.data} [${sm.id}]`;

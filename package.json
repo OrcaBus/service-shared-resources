@@ -6,8 +6,9 @@
   "scripts": {
     "test": "tsc && jest",
     "cdk": "cdk",
-    "cdk-stateful": "cdk -c deployMode=stateful",
+    "cdk-shared-stack": "cdk -c deployMode=sharedStack",
     "cdk-toolchain-bootstrap": "cdk -c deployMode=toolchainBootstrap",
+    "cdk-authorization-manager": "cdk -c deployMode=authorizationManager",
     "prepare": "pre-commit install",
     "prettier": "prettier --check .",
     "prettier-fix": "prettier --write .",
@@ -39,7 +40,7 @@
   },
   "dependencies": {
     "@aws-cdk/aws-lambda-python-alpha": "2.199.0-alpha.0",
-    "@orcabus/platform-cdk-constructs": "0.0.11",
+    "@orcabus/platform-cdk-constructs": "0.0.14",
     "aws-cdk-lib": "^2.199.0",
     "constructs": "^10.4.2"
   }

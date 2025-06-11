@@ -19,7 +19,11 @@ export class StatefulStack extends cdk.Stack {
         prod: getSharedStackProps('PROD'),
       },
       pipelineName: 'OrcaBus-StatefulSharedResources',
-      cdkSynthCmd: ['pnpm install --frozen-lockfile --ignore-scripts', 'pnpm cdk-stateful synth'],
+      cdkSynthCmd: [
+        'pnpm install --frozen-lockfile --ignore-scripts',
+        'pnpm cdk-shared-stack synth',
+      ],
+      includedFilePaths: ['infrastructure/shared-stack/**'],
     });
   }
 }
