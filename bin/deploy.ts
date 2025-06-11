@@ -6,6 +6,7 @@ import { TOOLCHAIN_ENVIRONMENT } from '@orcabus/platform-cdk-constructs/deployme
 import { ToolchainBootstrapStack } from '../infrastructure/bootstrap-stack/bootstrap-stack';
 import { AuthorizationManagerPipelineStack } from '../infrastructure/authorization-manager/toolchain/pipeline';
 import { TokenServicePipelineStack } from '../infrastructure/token-service/toolchain/stack';
+import { PostgresManagerPipelineStack } from '../infrastructure/postgres-manager/toolchain/pipeline';
 
 const app = new cdk.App();
 
@@ -28,6 +29,10 @@ if (deployMode === 'sharedStack') {
   });
 } else if (deployMode === 'tokenService') {
   new TokenServicePipelineStack(app, 'OrcaBusTokenServiceStack', {
+    env: TOOLCHAIN_ENVIRONMENT,
+  });
+} else if (deployMode === 'postgresManager') {
+  new PostgresManagerPipelineStack(app, 'OrcaBusPostgresManagerStack', {
     env: TOOLCHAIN_ENVIRONMENT,
   });
 } else {

@@ -10,6 +10,7 @@
     "cdk-toolchain-bootstrap": "cdk -c deployMode=toolchainBootstrap",
     "cdk-authorization-manager": "cdk -c deployMode=authorizationManager",
     "cdk-token-service": "cdk -c deployMode=tokenService",
+    "cdk-postgres-manager": "cdk -c deployMode=postgresManager",
     "prepare": "pre-commit install",
     "prettier": "prettier --check .",
     "prettier-fix": "prettier --write .",
