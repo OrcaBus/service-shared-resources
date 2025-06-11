@@ -1,29 +1,29 @@
 import { DeploymentStackPipeline } from '@orcabus/platform-cdk-constructs/deployment-stack-pipeline';
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-import { AuthorizationManagerStack } from '../stage/stack';
-import { getAuthorizationManagerStackProps } from '../stage/config';
+import { TokenServiceStack } from '../stage/deploy/stack';
+import { getTokenServiceStackProps } from '../stage/config';
 
-export class AuthorizationManagerPipelineStack extends cdk.Stack {
+export class TokenServicePipelineStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     new DeploymentStackPipeline(this, 'Pipeline', {
       githubBranch: 'main',
       githubRepo: 'service-shared-resources',
-      stack: AuthorizationManagerStack,
-      stackName: 'AuthorizationManagerStack',
+      stack: TokenServiceStack,
+      stackName: 'TokenServiceStack',
       stackConfig: {
-        beta: getAuthorizationManagerStackProps('BETA'),
-        gamma: getAuthorizationManagerStackProps('GAMMA'),
-        prod: getAuthorizationManagerStackProps('PROD'),
+        beta: getTokenServiceStackProps(),
+        gamma: getTokenServiceStackProps(),
+        prod: getTokenServiceStackProps(),
       },
       pipelineName: 'OrcaBus-Authorization-Manager-Stack',
       cdkSynthCmd: [
         'pnpm install --frozen-lockfile --ignore-scripts',
-        'pnpm cdk-authorization-manager synth',
+        'pnpm cdk-token-service synth',
       ],
-      includedFilePaths: ['infrastructure/authorization-manager/**'],
+      includedFilePaths: ['infrastructure/token-service/**'],
     });
   }
 }

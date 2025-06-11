@@ -5,6 +5,7 @@ import { StatefulStack } from '../infrastructure/shared-stack/toolchain/shared-s
 import { TOOLCHAIN_ENVIRONMENT } from '@orcabus/platform-cdk-constructs/deployment-stack-pipeline';
 import { ToolchainBootstrapStack } from '../infrastructure/bootstrap-stack/bootstrap-stack';
 import { AuthorizationManagerPipelineStack } from '../infrastructure/authorization-manager/toolchain/pipeline';
+import { TokenServicePipelineStack } from '../infrastructure/token-service/toolchain/stack';
 
 const app = new cdk.App();
 
@@ -23,6 +24,10 @@ if (deployMode === 'sharedStack') {
   });
 } else if (deployMode === 'authorizationManager') {
   new AuthorizationManagerPipelineStack(app, 'OrcaBusAuthorizationStack', {
+    env: TOOLCHAIN_ENVIRONMENT,
+  });
+} else if (deployMode === 'tokenService') {
+  new TokenServicePipelineStack(app, 'OrcaBusTokenServiceStack', {
     env: TOOLCHAIN_ENVIRONMENT,
   });
 } else {
