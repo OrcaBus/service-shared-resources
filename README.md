@@ -2,22 +2,17 @@
 
 ## Overview
 
-This repository is designed to deploy resources that can be reused or shared by different microservices across all AWS accounts (beta, gamma, prod, and toolchain).
+This repository is designed to deploy resources that can be reused or shared by different microservices across all AWS
+accounts (beta, gamma, prod, and toolchain).
+
 
 ## Project Structure
 
 The project is organized into the following key directories:
 
 - **`./bin/deploy.ts`**: Serves as the entry point of the application.
-- **`./infrastructure`**: Contains the infrastructure code for the project:
-- **`./infrastructure/toolchain`**: Contains stacks for resources deployed in the toolchain account, including:
-  - **Stateless and stateful stacks** for setting up CodePipeline and related resources for cross-environment deployments.
-    - **Bootstrap stack** for one-time setup tasks required by the toolchain account (e.g., artifact buckets, roles).
-  - **`./infrastructure/stage`**: Defines the stage stacks for different environments:
-    - **`./infrastructure/stage/config.ts`**: Contains environment-specific configuration files (e.g., `beta`, `gamma`, `prod`).
-    - **`./infrastructure/stage/stack.ts`**: The CDK stack entry point for provisioning resources required for the
-      shared resource in its respective account.
-
+- **`./infrastructure`**: Contains the infrastructure code for the project.
+  Each subfolder within `infrastructure` now represents a different app (for example: `authorization-manager/`, `token-service/`, `postgres-manager/`, etc.).
 - **`.github/workflows/pr-tests.yml`**: Configures GitHub Actions to run tests for `make check` (linting and code style), tests defined in `./test`, and `make test` for the `./app` directory. Modify this file as needed to ensure the tests are properly configured for your environment.
 
 - **`./test`**: Contains tests for CDK code compliance against `cdk-nag`. You should modify these test files to match the resources defined in the `./infrastructure` folder.
@@ -54,39 +49,34 @@ Before using this template, search for all instances of `TODO:` comments in the 
 
 You can access CDK commands using the `pnpm` wrapper script.
 
-This template provides two types of CDK entry points:
+This template provides several CDK entry points, each mapped to a specific stack or deployment mode:
 
-- **`cdk-toolchain-bootstrap`**: Used to deploy the bootstrap stack containing foundational, one-time setup resources
-  required by the toolchain account (e.g., artifact buckets, KMS keys). This should be run only once per toolchain account,
-  typically before deploying any other stacks.
-Note: This stack is currently deployed manually whenever changes are made to it.
-- **`cdk-stateful`**: Used to deploy stacks containing stateful resources (e.g., AWS DynamoDB, AWS RDS), where redeployment may not be ideal due to potential side effects.
+```json
+"cdk-shared-stack": "cdk -c deployMode=sharedStack",
+"cdk-toolchain-bootstrap": "cdk -c deployMode=toolchainBootstrap",
+"cdk-authorization-manager": "cdk -c deployMode=authorizationManager",
+"cdk-token-service": "cdk -c deployMode=tokenService",
+"cdk-postgres-manager": "cdk -c deployMode=postgresManager",
+```
+
+- **`cdk-shared-stack`**: Deploys the shared stateful stack for resources used across microservices.
+- **`cdk-toolchain-bootstrap`**: Deploys the bootstrap stack with foundational, one-time setup resources required by the
+  toolchain account (e.g., artifact buckets, KMS keys). This should be run only once per toolchain account, typically
+  before deploying any other stacks. _Note: This stack is currently deployed manually whenever changes are made to it._
+- **`cdk-authorization-manager`**: Deploys the authorization manager pipeline stack.
+- **`cdk-token-service`**: Deploys the token service pipeline stack.
+- **`cdk-postgres-manager`**: Deploys the Postgres manager pipeline stack.
 
 The type of stack to deploy is determined by the context set in the `./bin/deploy.ts` file. This ensures the correct stack is executed based on the provided context.
 
-For example:
+#### Usage Example
 
 ```sh
 pnpm cdk-toolchain-bootstrap <command>
-
-pnpm cdk-stateful <command>
-```
-
-### Stacks
-
-Currently, this CDK project provides a single stack: `OrcaBusToolchainBootstrapStack`.
-This stack bootstraps the toolchain account with foundational resources (such as artifact buckets) required before deploying any other OrcaBus resources.
-
-To list available stacks, run:
-
-```sh
-pnpm cdk-toolchain-bootstrap ls
-```
-
-Example output:
-
-```sh
-OrcaBusToolchainBootstrapStack
+pnpm cdk-shared-stack <command>
+pnpm cdk-authorization-manager <command>
+pnpm cdk-token-service <command>
+pnpm cdk-postgres-manager <command>
 ```
 
 ## Linting and Formatting
