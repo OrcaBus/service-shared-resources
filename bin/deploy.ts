@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { StatefulStack } from '../infrastructure/shared-stack/toolchain/shared-stack';
+import { StatefulStack } from '../infrastructure/shared-stack/toolchain/pipeline';
 import { TOOLCHAIN_ENVIRONMENT } from '@orcabus/platform-cdk-constructs/deployment-stack-pipeline';
 import { ToolchainBootstrapStack } from '../infrastructure/bootstrap-stack/bootstrap-stack';
 import { AuthorizationManagerPipelineStack } from '../infrastructure/authorization-manager/toolchain/pipeline';
-import { TokenServicePipelineStack } from '../infrastructure/token-service/toolchain/stack';
+import { TokenServicePipelineStack } from '../infrastructure/token-service/toolchain/pipeline';
 import { PostgresManagerPipelineStack } from '../infrastructure/postgres-manager/toolchain/pipeline';
 
 const app = new cdk.App();

@@ -1,13 +1,20 @@
 import { VPC_LOOKUP_PROPS } from '@orcabus/platform-cdk-constructs/shared-config/networking';
 import { TokenServiceStackProps } from './deploy/stack';
-import { DEFAULT_COGNITO_USER_POOL_ID_PARAMETER_NAME } from '@orcabus/platform-cdk-constructs/api-gateway';
+import {
+  COGNITO_PORTAL_APP_CLIENT_ID_PARAMETER_NAME,
+  DEFAULT_COGNITO_USER_POOL_ID_PARAMETER_NAME,
+} from '@orcabus/platform-cdk-constructs/api-gateway';
+import {
+  JWT_SECRET_NAME,
+  SERVICE_USER_SECRET_NAME,
+} from '@orcabus/platform-cdk-constructs/shared-config/secrets';
 
 export const getTokenServiceStackProps = (): TokenServiceStackProps => {
   return {
-    serviceUserSecretName: 'orcabus/token-service-user', // pragma: allowlist secret
-    jwtSecretName: 'orcabus/token-service-jwt', // pragma: allowlist secret
+    serviceUserSecretName: SERVICE_USER_SECRET_NAME,
+    jwtSecretName: JWT_SECRET_NAME,
     vpcProps: VPC_LOOKUP_PROPS,
     cognitoUserPoolIdParameterName: DEFAULT_COGNITO_USER_POOL_ID_PARAMETER_NAME,
-    cognitoPortalAppClientIdParameterName: '/data_portal/client/data2/cog_app_client_id_stage',
+    cognitoPortalAppClientIdParameterName: COGNITO_PORTAL_APP_CLIENT_ID_PARAMETER_NAME,
   };
 };
