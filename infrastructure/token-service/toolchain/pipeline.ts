@@ -18,7 +18,7 @@ export class TokenServicePipelineStack extends cdk.Stack {
         gamma: getTokenServiceStackProps(),
         prod: getTokenServiceStackProps(),
       },
-      pipelineName: 'OrcaBus-Authorization-Manager-Stack',
+      pipelineName: 'OrcaBus-TokenServiceStack',
       cdkSynthCmd: [
         'pnpm install --frozen-lockfile --ignore-scripts',
         'pnpm cdk-token-service synth',

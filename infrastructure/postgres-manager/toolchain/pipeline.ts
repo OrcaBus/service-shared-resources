@@ -18,7 +18,7 @@ export class PostgresManagerPipelineStack extends cdk.Stack {
         gamma: getPostgresManagerStackProps(),
         prod: getPostgresManagerStackProps(),
       },
-      pipelineName: 'OrcaBus-Authorization-Manager-Stack',
+      pipelineName: 'OrcaBus-PostgresManager',
       cdkSynthCmd: [
         'pnpm install --frozen-lockfile --ignore-scripts',
         'pnpm cdk-postgres-manager synth',

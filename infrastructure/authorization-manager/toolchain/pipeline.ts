@@ -18,7 +18,7 @@ export class AuthorizationManagerPipelineStack extends cdk.Stack {
         gamma: getAuthorizationManagerStackProps('GAMMA'),
         prod: getAuthorizationManagerStackProps('PROD'),
       },
-      pipelineName: 'OrcaBus-Authorization-Manager-Stack',
+      pipelineName: 'OrcaBus-AuthorizationManager',
       cdkSynthCmd: [
         'pnpm install --frozen-lockfile --ignore-scripts',
         'pnpm cdk-authorization-manager synth',
