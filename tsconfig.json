@@ -30,5 +30,8 @@
   "exclude": [
     "node_modules",
     "cdk.out",
+    // This should be handled within the postgres-manager itself
+    "infrastructure/postgres-manager/stage/function",
+    "infrastructure/postgres-manager/stage/tests",
   ]
 }

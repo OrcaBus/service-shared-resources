@@ -15,3 +15,5 @@ install:
 
 test:
 	@pnpm test
+	# Only pg-manager that currently has test
+	@(cd infrastructure/postgres-manager/stage && $(MAKE) test)

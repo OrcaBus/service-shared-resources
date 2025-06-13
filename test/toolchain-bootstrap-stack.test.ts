@@ -2,7 +2,7 @@ import { App, Aspects } from 'aws-cdk-lib';
 import { Annotations, Match } from 'aws-cdk-lib/assertions';
 import { AwsSolutionsChecks, NagSuppressions } from 'cdk-nag';
 import { synthesisMessageToString } from './utils';
-import { ToolchainBootstrapStack } from '../infrastructure/toolchain/bootstrap-stack';
+import { ToolchainBootstrapStack } from '../infrastructure/bootstrap-stack/bootstrap-stack';
 
 // describe('cdk-nag-stateless-toolchain-stack', () => {
 //   const app = new App({});

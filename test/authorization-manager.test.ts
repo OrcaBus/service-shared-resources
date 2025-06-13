@@ -2,19 +2,19 @@ import { App, Aspects, Stack } from 'aws-cdk-lib';
 import { Annotations, Match } from 'aws-cdk-lib/assertions';
 import { SynthesisMessage } from 'aws-cdk-lib/cx-api';
 import { AwsSolutionsChecks, NagSuppressions } from 'cdk-nag';
-import { SharedStack } from '../infrastructure/stage/stack';
-import { getSharedStackProps } from '../infrastructure/stage/config';
+import { AuthorizationManagerStack } from '../infrastructure/authorization-manager/stage/stack';
+import { getAuthorizationManagerStackProps } from '../infrastructure/authorization-manager/stage/config';
 
 function synthesisMessageToString(sm: SynthesisMessage): string {
   return `${sm.entry.data} [${sm.id}]`;
 }
 
-describe('cdk-nag-stateless-toolchain-stack', () => {
+describe('cdk-nag-authorization-stack', () => {
   const app = new App({});
 
   // You should configure all stack (sateless, stateful) to be tested
-  const deployStack = new SharedStack(app, 'SharedStack', {
-    ...getSharedStackProps('PROD'),
+  const deployStack = new AuthorizationManagerStack(app, 'AuthorizationManagerStack', {
+    ...getAuthorizationManagerStackProps('PROD'),
     env: {
       account: '123456789',
       region: 'ap-southeast-2',
@@ -54,38 +54,12 @@ function applyNagSuppression(stack: Stack) {
     [{ id: 'AwsSolutions-IAM5', reason: 'Allow wildcard permissions' }],
     true
   );
-  NagSuppressions.addResourceSuppressionsByPath(
-    stack,
-    ['/SharedStack/EventBusConstruct/UniversalEventArchiveBucket/Resource'],
-    [
-      {
-        id: 'AwsSolutions-S1',
-        reason: 'This is no necessity to retain the server access logs for Event Archiver Bucket.',
-      },
-    ],
-    true
-  );
   NagSuppressions.addStackSuppressions(
     stack,
     [
       {
         id: 'AwsSolutions-L1',
         reason: 'Allow to use non latest runtime version for Lambda functions.',
-      },
-    ],
-    true
-  );
-
-  // Remove this when the resource is removed
-  NagSuppressions.addResourceSuppressionsByPath(
-    stack,
-    '/SharedStack/OrcabusEventDlqFmannotator/Resource',
-    [
-      {
-        id: 'AwsSolutions-SQS3',
-        reason:
-          'it is expected that the DLQ construct has a Queue without a DLQ, because that ' +
-          'queue itself acts as the DLQ for other constructs.',
       },
     ],
     true
