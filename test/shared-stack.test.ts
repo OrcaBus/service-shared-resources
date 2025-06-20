@@ -75,19 +75,4 @@ function applyNagSuppression(stack: Stack) {
     ],
     true
   );
-
-  // Remove this when the resource is removed
-  NagSuppressions.addResourceSuppressionsByPath(
-    stack,
-    '/SharedStack/OrcabusEventDlqFmannotator/Resource',
-    [
-      {
-        id: 'AwsSolutions-SQS3',
-        reason:
-          'it is expected that the DLQ construct has a Queue without a DLQ, because that ' +
-          'queue itself acts as the DLQ for other constructs.',
-      },
-    ],
-    true
-  );
 }

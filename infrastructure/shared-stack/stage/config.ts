@@ -10,8 +10,6 @@ import {
   PROD_ENVIRONMENT,
 } from '@orcabus/platform-cdk-constructs/deployment-stack-pipeline';
 import { ComputeProps } from './constructs/compute';
-import { EventSourceProps } from './constructs/event-source';
-import { EventDLQProps } from './constructs/event-dlq';
 import { ConfigurableDatabaseProps } from './constructs/database';
 import {
   SHARED_SECURITY_GROUP_NAME,
@@ -29,59 +27,6 @@ import {
   DB_CLUSTER_RESOURCE_ID_PARAMETER_NAME,
   RDS_MASTER_SECRET_NAME,
 } from '@orcabus/platform-cdk-constructs/shared-config/database';
-
-/* ******
- * TODO: Remove this to file manager
- * *****/
-
-const eventSourceQueueName = 'orcabus-event-source-queue';
-const oncoanalyserBucket: Record<StageName, string> = {
-  BETA: 'umccr-temp-dev',
-  GAMMA: 'umccr-temp-stg',
-  PROD: 'org.umccr.data.oncoanalyser',
-};
-
-const icav2PipelineCacheBucket: Record<StageName, string> = {
-  BETA: 'pipeline-dev-cache-503977275616-ap-southeast-2',
-  GAMMA: 'pipeline-stg-cache-503977275616-ap-southeast-2',
-  PROD: 'pipeline-prod-cache-503977275616-ap-southeast-2',
-};
-
-// The archive bucket. Noting that this is only present for prod data.
-const PROD_ICAV2_ARCHIVE_ANALYSIS_BUCKET = 'archive-prod-analysis-503977275616-ap-southeast-2';
-
-// The fastq bucket. Noting that this is only present for prod data.
-const PROD_ICAV2_ARCHIVE_FASTQ_BUCKET = 'archive-prod-fastq-503977275616-ap-southeast-2';
-
-const ntsmBucket: Record<StageName, string> = {
-  BETA: `ntsm-fingerprints-${BETA_ENVIRONMENT.account}-ap-southeast-2`,
-  GAMMA: `ntsm-fingerprints-${GAMMA_ENVIRONMENT.account}-ap-southeast-2`,
-  PROD: `ntsm-fingerprints-${PROD_ENVIRONMENT.account}-ap-southeast-2`,
-};
-
-/*
-Data sharing - need this in constants since the bucket will be read by the filemanager
-*/
-const dataSharingCacheBucket: Record<StageName, string> = {
-  BETA: `data-sharing-artifacts-${BETA_ENVIRONMENT.account}-ap-southeast-2`,
-  GAMMA: `data-sharing-artifacts-${GAMMA_ENVIRONMENT.account}-ap-southeast-2`,
-  PROD: `data-sharing-artifacts-${PROD_ENVIRONMENT.account}-ap-southeast-2`,
-};
-
-// DLQs for stateless stack functions
-const eventDlqNameFMAnnotator = 'orcabus-event-dlq-fmannotator';
-
-/*
- External Projects
-*/
-const externalProjectBuckets: Record<StageName, string[]> = {
-  BETA: [],
-  GAMMA: [],
-  PROD: [
-    // Project Montauk
-    'pipeline-montauk-977251586657-ap-southeast-2',
-  ],
-};
 
 const getEventSchemaRegistryConstructProps = (): SchemaRegistryProps => {
   return {
@@ -169,108 +114,6 @@ const getComputeConstructProps = (stage: StageName): ComputeProps => {
   }
 };
 
-const eventSourcePattern = () => {
-  return {
-    $or: [
-      {
-        size: [{ numeric: ['>', 0] }],
-      },
-      {
-        key: [{ 'anything-but': { wildcard: ['*/'] } }],
-      },
-    ],
-  };
-};
-
-const eventSourcePatternCache = () => {
-  // NOT KEY in cache AND (SIZE > 0 OR NOT KEY ends with "/") expands to
-  // (NOT KEY in cache and SIZE > 0) OR (NOT KEY in cache and NOT KEY ends with "/")\
-  return {
-    $or: [
-      {
-        key: [{ 'anything-but': { wildcard: ['byob-icav2/*/cache/*'] } }],
-        size: [{ numeric: ['>', 0] }],
-      },
-      {
-        key: [{ 'anything-but': { wildcard: ['byob-icav2/*/cache/*', '*/'] } }],
-      },
-    ],
-  };
-};
-
-const getEventSourceConstructProps = (stage: StageName): EventSourceProps => {
-  const eventTypes = [
-    'Object Created',
-    'Object Deleted',
-    'Object Restore Completed',
-    'Object Restore Expired',
-    'Object Storage Class Changed',
-    'Object Access Tier Changed',
-  ];
-
-  const props = {
-    queueName: eventSourceQueueName,
-    maxReceiveCount: 3,
-    rules: [
-      {
-        bucket: oncoanalyserBucket[stage],
-        eventTypes,
-        patterns: eventSourcePattern(),
-      },
-      {
-        bucket: icav2PipelineCacheBucket[stage],
-        eventTypes,
-        patterns: eventSourcePatternCache(),
-      },
-    ],
-  };
-
-  if (stage === 'PROD') {
-    props.rules.push({
-      bucket: PROD_ICAV2_ARCHIVE_ANALYSIS_BUCKET,
-      eventTypes,
-      patterns: eventSourcePattern(),
-    });
-    props.rules.push({
-      bucket: PROD_ICAV2_ARCHIVE_FASTQ_BUCKET,
-      eventTypes,
-      patterns: eventSourcePattern(),
-    });
-  }
-
-  // Add the ntsm bucket rule
-  props.rules.push({
-    bucket: ntsmBucket[stage],
-    eventTypes,
-    patterns: eventSourcePattern(),
-  });
-
-  props.rules.push({
-    bucket: dataSharingCacheBucket[stage],
-    eventTypes,
-    patterns: eventSourcePattern(),
-  });
-
-  for (const bucket of externalProjectBuckets[stage]) {
-    props.rules.push({
-      bucket: bucket,
-      eventTypes,
-      patterns: eventSourcePattern(),
-    });
-  }
-
-  return props;
-};
-
-const getEventDLQConstructProps = (): EventDLQProps[] => {
-  return [
-    {
-      queueName: eventDlqNameFMAnnotator,
-      alarmName: 'Orcabus FMAnnotator DLQ Alarm',
-    },
-  ];
-};
-
 const getDatabaseConstructProps = (stage: StageName): ConfigurableDatabaseProps => {
   const baseConfig = {
     clusterIdentifier: DB_CLUSTER_IDENTIFIER,
@@ -333,8 +176,5 @@ export const getSharedStackProps = (stage: StageName): SharedStackProps => {
     eventBusProps: getEventBusConstructProps(stage),
     databaseProps: getDatabaseConstructProps(stage),
     computeProps: getComputeConstructProps(stage),
-    eventSourceProps: getEventSourceConstructProps(stage),
-    // On removal also remove the path suppression in ./test/stage.test.ts
-    eventDLQProps: getEventDLQConstructProps(),
   };
 };
