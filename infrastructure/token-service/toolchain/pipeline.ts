@@ -2,7 +2,7 @@ import { DeploymentStackPipeline } from '@orcabus/platform-cdk-constructs/deploy
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { TokenServiceStack } from '../stage/deploy/stack';
-import { getTokenServiceStackProps } from '../stage/config';
+import { getTokenServiceStackProps } from '../stage/deploy/config';
 
 export class TokenServicePipelineStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
