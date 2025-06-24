@@ -23,11 +23,11 @@ export const getPostgresManagerStackProps = (): PostgresManagerStackProps => {
     microserviceDbConfig: [
       {
         name: 'sequence_run_manager',
-        authType: DbAuthType.USERNAME_PASSWORD,
+        authType: DbAuthType.RDS_IAM,
       },
       {
         name: 'workflow_manager',
-        authType: DbAuthType.USERNAME_PASSWORD,
+        authType: DbAuthType.RDS_IAM,
       },
       {
         name: 'metadata_manager',
