@@ -60,18 +60,7 @@ After then, the scheduled secret rotation should carry on rotating password, eve
 ## Development
 
 ```
-cd lib/workload/stateful/stacks/token-service
-```
-
-### TL;DR
-
-```
-make install
-make test
-make template
-make lint
-make code
-make stack
+cd infrastructure/token-service/stage
 ```
 
 ### Rotation Lambda
@@ -80,15 +69,13 @@ The stack contains 2 Lambda Python code that do secret rotation. This code is de
 ### Cognitor
 And, there is the thin service layer package called `cognitor` for interfacing with AWS Cognito through boto3 - in fact it just [a façade](https://www.google.com/search?q=fa%C3%A7ade+pattern) of boto3 for Cognito. See its test cases for how to use and operate it.
 
-### Local DX
+### Local Dev
 
-#### App
-
-No major dependencies except boto3 which is already avail in the Lambda Python runtime. So, we do not need to package it. For local dev, just create Python venv and, have it boto3 in.
+No major dependencies except boto3. It is already avail in the Lambda Python runtime. So, we do not need to package it. For local dev, just create Python venv and have it boto3 in.
 
 Do like so:
 ```
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 
 make install
@@ -97,31 +84,28 @@ make test
 deactivate
 ```
 
-#### CDK
+### CDK
 
 The `deploy` directory contains the CDK code for `TokenServiceStack`. It deploys the rotation Lambdas and, corresponding application artifact using `PythonFunction` (L4?) construct. It runs in the `main-vpc`. And, the secret permissions are bound to the allow resources strictly i.e. see those `grant(...)` flags. It has 1 unit test file and, cdk-nag test through CodePipeline.
 
 Do like so from the repo root:
 ```
-cd ../../../../../
+cd ../../../
 ```
 
 ```
-yarn test --- test/stateful/token-service/
-yarn test --- test/stateful/token-service/tokenServiceConstruct.test.ts
-yarn test --- test/stateful/
+pnpm test --- test/token-service.test.ts
 ```
 
 ```
 export AWS_PROFILE=umccr-dev-admin
-
-yarn cdk-stateful ls
-yarn cdk-stateful synth -e OrcaBusStatefulPipeline/BetaDeployment/TokenServiceStack
+pnpm cdk-token-service ls
+pnpm cdk-token-service synth -e OrcaBusTokenServiceStack/Pipeline/OrcaBusBeta/TokenServiceStack
 ```
 
 Perhaps copy to clipboard and, paste it into VSCode new file buffer and, observe the CloudFormation template being generated.
 ```
-yarn cdk-stateful synth -e OrcaBusStatefulPipeline/BetaDeployment/TokenServiceStack | pbcopy
+pnpm -s cdk-token-service synth -e OrcaBusTokenServiceStack/Pipeline/OrcaBusBeta/TokenServiceStack | pbcopy
 ```
 
 Or
@@ -129,7 +113,7 @@ Or
 ```
 mkdir -p .local
 
-yarn cdk-stateful synth -e OrcaBusStatefulPipeline/BetaDeployment/TokenServiceStack > .local/template.yml && code .local/template.yml
+pnpm -s cdk-token-service synth -e OrcaBusTokenServiceStack/Pipeline/OrcaBusBeta/TokenServiceStack > .local/template.yml && code .local/template.yml
 ```
 
 Then, do CloudFormation lint check:
@@ -141,11 +125,23 @@ If that all good, then you may `diff -e` & `deploy -e` straight to dev for givin
 
 ```
 export AWS_PROFILE=umccr-dev-admin
-yarn cdk-stateful diff -e OrcaBusStatefulPipeline/BetaDeployment/TokenServiceStack
-yarn cdk-stateful deploy -e OrcaBusStatefulPipeline/BetaDeployment/TokenServiceStack
-yarn cdk-stateful destroy -e OrcaBusStatefulPipeline/BetaDeployment/TokenServiceStack
+pnpm cdk-token-service diff -e OrcaBusTokenServiceStack/Pipeline/OrcaBusBeta/TokenServiceStack
+pnpm cdk-token-service deploy -e OrcaBusTokenServiceStack/Pipeline/OrcaBusBeta/TokenServiceStack
+pnpm cdk-token-service destroy -e OrcaBusTokenServiceStack/Pipeline/OrcaBusBeta/TokenServiceStack
 ```
 
 Run it in dev, check cloudwatch logs to debug, tear it down; rinse & spin.!
 
 When ready, PR and merge it into the `main` branch to let CodePipeline CI/CD takes care of shipping it towards the `prod`.
+
+### TL;DR
+
+```
+cd infrastructure/token-service/stage
+make install
+make test
+make template
+make lint
+make code
+make stack
+```

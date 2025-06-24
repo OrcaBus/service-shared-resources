@@ -1,5 +1,5 @@
 import { VPC_LOOKUP_PROPS } from '@orcabus/platform-cdk-constructs/shared-config/networking';
-import { TokenServiceStackProps } from './deploy/stack';
+import { TokenServiceStackProps } from './stack';
 import {
   COGNITO_PORTAL_APP_CLIENT_ID_PARAMETER_NAME,
   DEFAULT_COGNITO_USER_POOL_ID_PARAMETER_NAME,

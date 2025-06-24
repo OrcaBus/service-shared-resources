@@ -3,7 +3,7 @@ import { Annotations, Match } from 'aws-cdk-lib/assertions';
 import { SynthesisMessage } from 'aws-cdk-lib/cx-api';
 import { AwsSolutionsChecks, NagSuppressions } from 'cdk-nag';
 import { TokenServiceStack } from '../infrastructure/token-service/stage/deploy/stack';
-import { getTokenServiceStackProps } from '../infrastructure/token-service/stage/config';
+import { getTokenServiceStackProps } from '../infrastructure/token-service/stage/deploy/config';
 
 function synthesisMessageToString(sm: SynthesisMessage): string {
   return `${sm.entry.data} [${sm.id}]`;

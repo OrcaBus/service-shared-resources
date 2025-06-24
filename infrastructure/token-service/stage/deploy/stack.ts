@@ -14,7 +14,7 @@ import {
   getCognitoJWTPolicy,
   getLambdaVPCPolicy,
   getServiceUserSecretResourcePolicy,
-} from './constructs/policy';
+} from './policy';
 
 export interface TokenServiceStackProps {
   serviceUserSecretName: string;
