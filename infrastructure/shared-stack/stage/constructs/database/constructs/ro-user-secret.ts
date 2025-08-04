@@ -38,6 +38,7 @@ export class ReadOnlyUserSecret extends Construct {
       username: 'orcabus_ro',
       secretName: 'orcabus/ro-user', // pragma: allowlist secret
     });
+    this.databaseSecret.attach(props.dbCluster);
 
     new SecretRotation(this, 'ReadOnlyDbSecretRotation', {
       application: SecretRotationApplication.POSTGRES_ROTATION_SINGLE_USER,
@@ -46,7 +47,6 @@ export class ReadOnlyUserSecret extends Construct {
       secret: this.databaseSecret,
       target: props.dbCluster,
       automaticallyAfter: props.secretRotationSchedule,
-      masterSecret: props.masterSecret,
       securityGroup: props.securityGroup,
       vpc: props.vpc,
       vpcSubnets: {
