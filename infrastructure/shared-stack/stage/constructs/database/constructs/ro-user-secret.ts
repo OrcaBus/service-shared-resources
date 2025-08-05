@@ -28,6 +28,15 @@ export type ReadOnlyUserSecretProps = {
   masterSecret: ISecret;
 };
 
+/**
+ * Creates and manages a read-only user secret for the database cluster.
+ *
+ * The `orcabus_ro` user must be created manually with the password initiated within this construct in the database using the master secret.
+ * You also need to setup appropriate SELECT permissions for each database.
+ *
+ * This construct only handles the secret creation and rotation for the existing user.
+ *
+ */
 export class ReadOnlyUserSecret extends Construct {
   readonly databaseSecret: DatabaseSecret;
 
