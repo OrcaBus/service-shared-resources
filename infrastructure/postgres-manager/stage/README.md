@@ -44,20 +44,15 @@ NOTE: When deleting a configuration from the props, it will NOT delete/drop any 
 
 ## Read-Only User
 
-There is a read-only user (`orcabus_ro`) available for accessing databases with read-only permissions.
+A dedicated read-only user (`orcabus_ro`) is available for accessing databases with restricted permissions.
 
-> **📝 Important:** New databases require manual permission setup. You must grant appropriate SELECT permissions to `orcabus_ro` for each newly created database.
+> **📝 Important:** For each newly created database, you must manually grant connect permissions to `orcabus_ro`.
+> The `orcabus_ro` user should already have the `pg_read_all_data` role assigned, so only the connect privilege needs to be granted.
 
-### Setup Commands for New Databases
+### Granting Access for New Databases
 
-Run these commands as the master user to grant read-only access:
+Execute the following command as the master user to provide read-only access:
 
 ```sql
-GRANT CONNECT ON DATABASE yourdb TO orcabus_ro;
-
-\c yourdb
-
-GRANT USAGE ON SCHEMA public TO orcabus_ro;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO orcabus_ro;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO orcabus_ro;
+GRANT CONNECT ON DATABASE new_db TO orcabus_ro;
 ```
