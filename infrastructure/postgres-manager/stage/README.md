@@ -41,3 +41,18 @@ the `metadata_manager` is set to `user-pass` connection and a new configuration 
 `rds_iam`, the changes will update the login details in the database.
 
 NOTE: When deleting a configuration from the props, it will NOT delete/drop any roles or database in the cluster.
+
+## Read-Only User
+
+A dedicated read-only user (`orcabus_ro`) is available for accessing databases with restricted permissions.
+
+> **📝 Important:** For each newly created database, you must manually grant connect permissions to `orcabus_ro`.
+> The `orcabus_ro` user should already have the `pg_read_all_data` role assigned, so only the connect privilege needs to be granted.
+
+### Granting Access for New Databases
+
+Execute the following command as the master user to provide read-only access:
+
+```sql
+GRANT CONNECT ON DATABASE new_db TO orcabus_ro;
+```

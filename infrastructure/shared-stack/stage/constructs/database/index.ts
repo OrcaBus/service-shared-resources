@@ -8,6 +8,7 @@ import * as backup from 'aws-cdk-lib/aws-backup';
 import * as events from 'aws-cdk-lib/aws-events';
 import { SecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { DatabaseCluster } from 'aws-cdk-lib/aws-rds';
+import { ReadOnlyUserSecret } from './constructs/ro-user-secret';
 
 /**
  * Props for enabling enhanced monitoring.
@@ -116,7 +117,7 @@ export type DatabaseProps = ConfigurableDatabaseProps & {
   /**
    * Inbound security group for the database.
    */
-  allowedInboundSG?: ec2.SecurityGroup;
+  allowedInboundSG: ec2.SecurityGroup;
 };
 
 export class DatabaseConstruct extends Construct {
@@ -249,5 +250,14 @@ export class DatabaseConstruct extends Construct {
         resources: [backup.BackupResource.fromRdsServerlessCluster(this.cluster)],
       });
     }
+
+    // Setting up a read-only user for the database
+    new ReadOnlyUserSecret(this, 'ReadOnlyUserSecret', {
+      dbCluster: this.cluster,
+      vpc: props.vpc,
+      secretRotationSchedule: props.secretRotationSchedule,
+      securityGroup: props.allowedInboundSG,
+      masterSecret: dbSecret,
+    });
   }
 }
