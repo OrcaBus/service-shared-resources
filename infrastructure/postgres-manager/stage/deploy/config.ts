@@ -34,6 +34,7 @@ export const getPostgresManagerStackProps = (): PostgresManagerStackProps => {
         authType: DbAuthType.RDS_IAM,
       },
       { name: 'filemanager', authType: DbAuthType.RDS_IAM },
+      { name: 'case_manager', authType: DbAuthType.RDS_IAM },
     ],
     secretRotationSchedule: Duration.days(7),
   };
