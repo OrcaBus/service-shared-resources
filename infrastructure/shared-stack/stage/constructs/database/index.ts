@@ -19,14 +19,6 @@ type MonitoringProps = {
    */
   cloudwatchLogsExports?: string[];
   /**
-   * Enable performance insights.
-   */
-  enablePerformanceInsights?: boolean;
-  /**
-   * performance insights retention period.
-   */
-  performanceInsightsRetention?: rds.PerformanceInsightRetention;
-  /**
    * Enable enhanced monitoring by specifying the interval.
    */
   enhancedMonitoringInterval?: Duration;
@@ -173,9 +165,7 @@ export class DatabaseConstruct extends Construct {
       cloudwatchLogsExports: props.cloudwatchLogsExports,
       monitoringInterval: props.enhancedMonitoringInterval,
 
-      writer: rds.ClusterInstance.serverlessV2('WriterClusterInstance', {
-        enablePerformanceInsights: props.enablePerformanceInsights,
-      }),
+      writer: rds.ClusterInstance.serverlessV2('WriterClusterInstance', {}),
 
       backup: {
         retention: props.backupRetention,

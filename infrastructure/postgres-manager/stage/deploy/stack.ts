@@ -85,7 +85,7 @@ export class PostgresManagerStack extends Stack {
       }),
       timeout: Duration.minutes(10),
       handler: 'index.handler',
-      runtime: Runtime.NODEJS_20_X,
+      runtime: Runtime.NODEJS_24_X,
       architecture: Architecture.ARM_64,
       vpc: vpc,
       vpcSubnets: {
