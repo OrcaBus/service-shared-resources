@@ -1,5 +1,5 @@
 import { Construct } from 'constructs';
-import { Stack, StackProps } from 'aws-cdk-lib';
+import { StackProps } from 'aws-cdk-lib';
 import { IcaEventPipeConstruct, IcaEventPipeConstructProps } from './ica-event-pipe';
 
 const alarmThreshod: number = 1;
@@ -21,15 +21,11 @@ export interface EventPipeProps {
 
 export class EventPipeConstruct extends Construct {
   constructor(scope: Construct, id: string, props: StackProps & EventPipeProps) {
-    super(scope, id, props);
+    super(scope, id);
     this.createConstruct(this, 'EventPipeConstruct', props);
   }
 
-  private createConstruct(
-    scope: Construct,
-    id: string,
-    props: StackProps & EventPipeProps
-  ) {
+  private createConstruct(scope: Construct, id: string, props: StackProps & EventPipeProps) {
     const constructProps: IcaEventPipeConstructProps = {
       icaEventPipeName: props.name + 'Pipe',
       icaQueueName: props.name + 'Queue',

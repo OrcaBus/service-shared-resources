@@ -11,6 +11,12 @@ importers:
       '@aws-cdk/aws-lambda-python-alpha':
         specifier: 2.233.0-alpha.0
         version: 2.233.0-alpha.0(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)
+      '@aws-cdk/aws-pipes-alpha':
+        specifier: 2.234.1-alpha.0
+        version: 2.234.1-alpha.0(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)
+      '@aws-cdk/aws-pipes-sources-alpha':
+        specifier: 2.234.1-alpha.0
+        version: 2.234.1-alpha.0(@aws-cdk/aws-pipes-alpha@2.234.1-alpha.0(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4))(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)
       '@orcabus/platform-cdk-constructs':
         specifier: 0.0.104
         version: 0.0.104(@aws-cdk/aws-lambda-python-alpha@2.233.0-alpha.0(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4))(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)
@@ -20,6 +26,9 @@ importers:
       constructs:
         specifier: ^10.4.4
         version: 10.4.4
+      sqs-dlq-monitoring:
+        specifier: ^1.2.20
+        version: 1.2.21(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)
     devDependencies:
       '@eslint/js':
         specifier: ^9.39.2
@@ -77,6 +86,21 @@ packages:
     engines: {node: '>= 18.0.0'}
     peerDependencies:
       aws-cdk-lib: ^2.233.0
+      constructs: ^10.0.0
+
+  '@aws-cdk/aws-pipes-alpha@2.234.1-alpha.0':
+    resolution: {integrity: sha512-50al7X5KGGhZmq4RgPeFSKZmv+rH1aVRb9Oi7Y+03VSzVS1vSfNHPFplK1PkXpCMeUVFHr40fwKv2FeEg1y1jw==}
+    engines: {node: '>= 18.0.0'}
+    peerDependencies:
+      aws-cdk-lib: ^2.234.1
+      constructs: ^10.0.0
+
+  '@aws-cdk/aws-pipes-sources-alpha@2.234.1-alpha.0':
+    resolution: {integrity: sha512-uPCmDJ1HIoEh8D5Diza53gKO7sm3M9w4bUYIIWmUb0cYrrL2KYXS45J0fcLD8VdFqHkd5q855NL9G7Xf8nFhPw==}
+    engines: {node: '>= 18.0.0'}
+    peerDependencies:
+      '@aws-cdk/aws-pipes-alpha': 2.234.1-alpha.0
+      aws-cdk-lib: ^2.234.1
       constructs: ^10.0.0
 
   '@aws-cdk/cloud-assembly-schema@48.20.0':
@@ -1610,6 +1634,14 @@ packages:
   sprintf-js@1.0.3:
     resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
 
+  sqs-dlq-monitoring@1.2.21:
+    resolution: {integrity: sha512-C2UK/vSP7/osY1LUaiORbuhE9NwYwcXpejODYdFJZNBp+pW4/FxwR+V8yZdPSMOjwlttlETjAws2wsj6jEdl/A==}
+    peerDependencies:
+      aws-cdk-lib: ^2.60.0
+      constructs: ^10.0.5
+    bundledDependencies:
+      - axios
+
   stack-utils@2.0.6:
     resolution: {integrity: sha512-XlkWvfIm6RmsWtNJx+uqtKLS8eqFbxUg0ZzLXqY0caEy9l7hruX8IpiDnjsLavoBgqCCR71TqWO8MaXYheJ3RQ==}
     engines: {node: '>=10'}
@@ -1842,6 +1874,17 @@ snapshots:
 
   '@aws-cdk/aws-lambda-python-alpha@2.233.0-alpha.0(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)':
     dependencies:
+      aws-cdk-lib: 2.233.0(constructs@10.4.4)
+      constructs: 10.4.4
+
+  '@aws-cdk/aws-pipes-alpha@2.234.1-alpha.0(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)':
+    dependencies:
+      aws-cdk-lib: 2.233.0(constructs@10.4.4)
+      constructs: 10.4.4
+
+  '@aws-cdk/aws-pipes-sources-alpha@2.234.1-alpha.0(@aws-cdk/aws-pipes-alpha@2.234.1-alpha.0(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4))(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)':
+    dependencies:
+      '@aws-cdk/aws-pipes-alpha': 2.234.1-alpha.0(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4)
       aws-cdk-lib: 2.233.0(constructs@10.4.4)
       constructs: 10.4.4
 
@@ -3622,6 +3665,11 @@ snapshots:
   source-map@0.6.1: {}
 
   sprintf-js@1.0.3: {}
+
+  sqs-dlq-monitoring@1.2.21(aws-cdk-lib@2.233.0(constructs@10.4.4))(constructs@10.4.4):
+    dependencies:
+      aws-cdk-lib: 2.233.0(constructs@10.4.4)
+      constructs: 10.4.4
 
   stack-utils@2.0.6:
     dependencies:

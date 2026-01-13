@@ -2,7 +2,7 @@ import { Stack, StackProps } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Vpc, VpcLookupOptions } from 'aws-cdk-lib/aws-ec2';
 import { EventBusConstruct, EventBusProps } from './constructs/event-bus';
-import { EventPipeConstruct, EventPipeProps } from './constructs/ica-event-pipe';
+import { EventPipeConstruct, EventPipeProps } from './constructs/event-pipe';
 import { ConfigurableDatabaseProps, DatabaseConstruct } from './constructs/database';
 import { ComputeProps, ComputeConstruct } from './constructs/compute';
 import { SchemaRegistryConstruct, SchemaRegistryProps } from './constructs/schema-registry';
