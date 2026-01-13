@@ -1,9 +1,10 @@
 import { AuroraPostgresEngineVersion } from 'aws-cdk-lib/aws-rds';
 import { SchemaRegistryProps } from './constructs/schema-registry';
-import { StageName } from '@orcabus/platform-cdk-constructs/shared-config/accounts';
+import { StageName, ICA_ACCOUNT_ID } from '@orcabus/platform-cdk-constructs/shared-config/accounts';
 import { SharedStackProps } from './stack';
 import { Duration, RemovalPolicy } from 'aws-cdk-lib';
 import { EventBusProps } from './constructs/event-bus';
+import { EventPipeProps } from './constructs/event-pipe';
 import {
   BETA_ENVIRONMENT,
   GAMMA_ENVIRONMENT,
@@ -86,6 +87,15 @@ const getEventBusConstructProps = (stage: StageName): EventBusProps => {
         },
       };
   }
+};
+
+const getEventPipeConstructProps = (): EventPipeProps => {
+  return {
+    name: 'OrcaBusMainEventPipe',
+    eventBusName: EVENT_BUS_NAME,
+    slackTopicName: 'AwsChatBotTopic',
+    icaAwsAccountNumber: ICA_ACCOUNT_ID,
+  };
 };
 
 const getComputeConstructProps = (stage: StageName): ComputeProps => {
@@ -171,6 +181,7 @@ export const getSharedStackProps = (stage: StageName): SharedStackProps => {
     eventSchemaRegistryProps: getEventSchemaRegistryConstructProps(),
     dataSchemaRegistryProps: getDataSchemaRegistryConstructProps(),
     eventBusProps: getEventBusConstructProps(stage),
+    eventPipeProps: getEventPipeConstructProps(),
     databaseProps: getDatabaseConstructProps(stage),
     computeProps: getComputeConstructProps(stage),
   };
