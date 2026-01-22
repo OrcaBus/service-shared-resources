@@ -24,6 +24,17 @@ export class StatefulStack extends cdk.Stack {
         'pnpm cdk-shared-stack synth',
       ],
       includedFilePaths: ['infrastructure/shared-stack/**'],
+      unitAppTestConfig: {
+        // only event bus archiver has app tests.
+        command: [
+          'cd infrastructure/shared-stack/stage/constructs/event-bus/custom-event-archiver',
+          'make install',
+          'make test',
+        ],
+      },
+      unitIacTestConfig: {
+        command: ['pnpm test shared-stack.test.ts'],
+      },
     });
   }
 }
