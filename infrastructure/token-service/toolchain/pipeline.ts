@@ -24,6 +24,12 @@ export class TokenServicePipelineStack extends cdk.Stack {
         'pnpm cdk-token-service synth',
       ],
       includedFilePaths: ['infrastructure/token-service/**'],
+      unitAppTestConfig: {
+        command: ['cd infrastructure/token-service/stage', 'make install', 'make test'],
+      },
+      unitIacTestConfig: {
+        command: ['pnpm test token-service.test.ts'],
+      },
     });
   }
 }

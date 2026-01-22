@@ -24,6 +24,13 @@ export class AuthorizationManagerPipelineStack extends cdk.Stack {
         'pnpm cdk-authorization-manager synth',
       ],
       includedFilePaths: ['infrastructure/authorization-manager/**'],
+      unitAppTestConfig: {
+        // No app tests for authorization manager yet.
+        command: [],
+      },
+      unitIacTestConfig: {
+        command: ['pnpm test authorization-manager.test.ts'],
+      },
     });
   }
 }

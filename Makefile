@@ -15,5 +15,8 @@ install:
 
 test:
 	@pnpm test
-	@(cd infrastructure/postgres-manager/stage && $(MAKE) test)
-	@(cd infrastructure/token-service/stage && $(MAKE) test)
+
+test-all: test
+	@(cd infrastructure/postgres-manager/stage && $(MAKE) install && $(MAKE) test)
+	@(cd infrastructure/shared-stack/stage/constructs/event-bus/custom-event-archiver && $(MAKE) install && $(MAKE) test)
+	@(cd infrastructure/token-service/stage && $(MAKE) install && $(MAKE) test)
