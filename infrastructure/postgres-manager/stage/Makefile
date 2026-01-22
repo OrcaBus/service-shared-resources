@@ -5,8 +5,7 @@ install:
 	@yarn install --immutable
 
 up:
-	@docker compose up --wait -d || true
-	@docker logs orcabus_db
+	@docker compose up --wait -d
 
 down:
 	@docker compose down
