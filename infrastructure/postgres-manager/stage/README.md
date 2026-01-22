@@ -12,16 +12,16 @@ make use of `rds_iam` or the conventional `user-password` connection string.
 The microservice config should look as follows:
 
 ```ts
-    microserviceDbConfig: [
-      {
-        name: 'metadata_manager',
-        authType: DbAuthType.USERNAME_PASSWORD,
-      },
-      {
-        name: 'filemanager',
-        authType: DbAuthType.RDS_IAM
-      },
-    ]
+microserviceDbConfig: [
+  {
+    name: 'metadata_manager',
+    authType: DbAuthType.USERNAME_PASSWORD,
+  },
+  {
+    name: 'filemanager',
+    authType: DbAuthType.RDS_IAM,
+  },
+];
 ```
 
 The DbAuthType is defined at the [./function/utils.ts](./function/utils.ts) in this project and it is as follows:
