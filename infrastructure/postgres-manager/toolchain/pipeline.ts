@@ -25,6 +25,11 @@ export class PostgresManagerPipelineStack extends cdk.Stack {
       ],
       includedFilePaths: ['infrastructure/postgres-manager/**'],
       unitAppTestConfig: {
+        installCommands: [
+          'npm install --global corepack@latest',
+          'corepack enable',
+          'pnpm install --frozen-lockfile --ignore-scripts',
+        ],
         command: ['cd infrastructure/postgres-manager/stage', 'make install', 'make test'],
       },
       unitIacTestConfig: {
