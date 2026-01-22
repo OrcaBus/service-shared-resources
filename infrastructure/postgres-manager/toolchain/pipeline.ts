@@ -9,7 +9,7 @@ export class PostgresManagerPipelineStack extends cdk.Stack {
     super(scope, id, props);
 
     new DeploymentStackPipeline(this, 'Pipeline', {
-      githubBranch: 'feat/code-build-cache',
+      githubBranch: 'main',
       githubRepo: 'service-shared-resources',
       stack: PostgresManagerStack,
       stackName: 'PostgresManagerStack',
