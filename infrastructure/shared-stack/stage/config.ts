@@ -118,7 +118,7 @@ const getDatabaseConstructProps = (stage: StageName): ConfigurableDatabaseProps 
   const baseConfig = {
     clusterIdentifier: DB_CLUSTER_IDENTIFIER,
     defaultDatabaseName: 'orcabus',
-    version: AuroraPostgresEngineVersion.VER_16_6,
+    version: AuroraPostgresEngineVersion.VER_17_9,
     parameterGroupName: 'default.aurora-postgresql16',
     username: 'postgres',
     dbPort: DATABASE_PORT,

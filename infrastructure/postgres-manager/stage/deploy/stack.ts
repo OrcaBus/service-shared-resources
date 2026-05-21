@@ -10,6 +10,7 @@ import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as sm from 'aws-cdk-lib/aws-secretsmanager';
 import { MicroserviceConfig, DbAuthType } from '../function/type';
 import { ProviderFunction } from '@orcabus/platform-cdk-constructs/provider-function';
+import { formatRdsPolicyName } from '@orcabus/platform-cdk-constructs/shared-config/database';
 
 export type PostgresManagerStackProps = {
   /**
@@ -168,7 +169,7 @@ export class PostgresManagerStack extends Stack {
    * @param microserviceName the name of the microservice
    */
   static formatRdsPolicyName(microserviceName: string) {
-    return `orcabus-rds-connect-${microserviceName}`;
+    return formatRdsPolicyName(microserviceName);
   }
 
   /**
