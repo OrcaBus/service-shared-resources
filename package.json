@@ -34,6 +34,7 @@
     "globals": "^17.6.0",
     "jest": "^30.4.2",
     "prettier": "^3.8.3",
+    "source-map-support": "^0.5.21",
     "test-js": "^0.0.4",
     "ts-jest": "^29.4.10",
     "ts-node": "^10.9.2",
