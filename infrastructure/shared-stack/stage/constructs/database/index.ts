@@ -11,17 +11,13 @@ import { DatabaseCluster } from 'aws-cdk-lib/aws-rds';
 import { ReadOnlyUserSecret } from './constructs/ro-user-secret';
 
 /**
- * Props for enabling enhanced monitoring.
+ * Props for cloudwatch.
  */
 type MonitoringProps = {
   /**
    * Add cloud watch exports.
    */
   cloudwatchLogsExports?: string[];
-  /**
-   * Enable enhanced monitoring by specifying the interval.
-   */
-  enhancedMonitoringInterval?: Duration;
 };
 
 /**
@@ -161,12 +157,11 @@ export class DatabaseConstruct extends Construct {
       vpcSubnets: {
         subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
       },
-
+      enablePerformanceInsights: false,
       cloudwatchLogsExports: props.cloudwatchLogsExports,
-      monitoringInterval: props.enhancedMonitoringInterval,
-
-      writer: rds.ClusterInstance.serverlessV2('WriterClusterInstance', {}),
-
+      writer: rds.ClusterInstance.serverlessV2('WriterClusterInstance', {
+        enablePerformanceInsights: false,
+      }),
       backup: {
         retention: props.backupRetention,
       },
