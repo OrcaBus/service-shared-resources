@@ -157,10 +157,11 @@ export class DatabaseConstruct extends Construct {
       vpcSubnets: {
         subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
       },
-      enableClusterLevelEnhancedMonitoring: true,
       enablePerformanceInsights: false,
       cloudwatchLogsExports: props.cloudwatchLogsExports,
-      writer: rds.ClusterInstance.serverlessV2('WriterClusterInstance', {}),
+      writer: rds.ClusterInstance.serverlessV2('WriterClusterInstance', {
+        enablePerformanceInsights: false,
+      }),
       backup: {
         retention: props.backupRetention,
       },
