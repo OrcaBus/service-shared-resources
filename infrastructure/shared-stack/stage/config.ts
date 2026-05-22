@@ -119,7 +119,6 @@ const getDatabaseConstructProps = (stage: StageName): ConfigurableDatabaseProps 
     clusterIdentifier: DB_CLUSTER_IDENTIFIER,
     defaultDatabaseName: 'orcabus',
     version: AuroraPostgresEngineVersion.VER_17_9,
-    parameterGroupName: 'default.aurora-postgresql16',
     username: 'postgres',
     dbPort: DATABASE_PORT,
     masterSecretName: RDS_MASTER_SECRET_NAME,
@@ -138,6 +137,7 @@ const getDatabaseConstructProps = (stage: StageName): ConfigurableDatabaseProps 
         removalPolicy: RemovalPolicy.DESTROY,
         backupRetention: Duration.days(1),
         createT2BackupRetention: false,
+        parameterGroupName: 'default.aurora-postgresql17',
       };
     case 'GAMMA':
       return {
@@ -148,6 +148,7 @@ const getDatabaseConstructProps = (stage: StageName): ConfigurableDatabaseProps 
         removalPolicy: RemovalPolicy.DESTROY,
         backupRetention: Duration.days(1),
         createT2BackupRetention: false,
+        parameterGroupName: 'default.aurora-postgresql17',
       };
     case 'PROD':
       return {
@@ -158,6 +159,9 @@ const getDatabaseConstructProps = (stage: StageName): ConfigurableDatabaseProps 
         removalPolicy: RemovalPolicy.RETAIN,
         backupRetention: Duration.days(7),
         createT2BackupRetention: true,
+        // For prod, we retain a parameter group with `rds.logical_replication = 1` for downstream
+        // processes
+        parameterGroupName: 'orcabus-postgres-17-logical-replication',
       };
   }
 };
