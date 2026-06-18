@@ -2759,6 +2759,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"aws-ssl-profiles@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "aws-ssl-profiles@npm:1.1.2"
+  checksum: 10/af9e5c5e6e343e0f299106acaf03106a7458be69772d004f3e4cf0e3649bb41131b594126fcbc997ad89d73752d9e1d72886c72fcc8649ac5d590459d6b75827
+  languageName: node
+  linkType: hard
+
 "babel-jest@npm:30.2.0":
   version: 30.2.0
   resolution: "babel-jest@npm:30.2.0"
@@ -5005,6 +5012,7 @@ __metadata:
     "@types/aws-lambda": "npm:^8.10.160"
     "@types/jest": "npm:^30.0.0"
     "@types/pg": "npm:^8.16.0"
+    aws-ssl-profiles: "npm:^1.1.2"
     esbuild: "npm:^0.27.2"
     jest: "npm:^30.2.0"
     pg: "npm:^8.17.2"
