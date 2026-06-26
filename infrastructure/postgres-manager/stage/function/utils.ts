@@ -1,4 +1,5 @@
 import { SecretsManagerClient, GetSecretValueCommand } from '@aws-sdk/client-secrets-manager';
+import awsCaBundle from 'aws-ssl-profiles';
 import { MicroserviceConfig } from './type';
 
 /**
@@ -29,6 +30,10 @@ export const getRdsMasterSecret = async () => {
     database: rdsSecret.dbname,
     user: rdsSecret.username,
     password: rdsSecret.password,
+    ssl: {
+      ...awsCaBundle,
+      rejectUnauthorized: true,
+    },
   };
 };
 
