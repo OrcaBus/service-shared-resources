@@ -12,6 +12,18 @@
           "principalTypes": ["User", "CognitoUserGroup"],
           "resourceTypes": ["Microservice"]
         }
+      },
+      "POST /api/v1/case/{orcabusId}/external-entity/{PROXY+}": {
+        "appliesTo": {
+          "principalTypes": ["User", "CognitoUserGroup"],
+          "resourceTypes": ["Microservice"]
+        }
+      },
+      "DELETE /api/v1/case/{orcabusId}/external-entity/{externalEntityOrcabusId}/{PROXY+}": {
+        "appliesTo": {
+          "principalTypes": ["User", "CognitoUserGroup"],
+          "resourceTypes": ["Microservice"]
+        }
       }
     },
     "entityTypes": {
