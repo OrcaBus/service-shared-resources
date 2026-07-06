@@ -1,5 +1,9 @@
+import logging
 import os
 import boto3
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 client = boto3.client('verifiedpermissions')
 
@@ -45,9 +49,8 @@ def handler(event, context):
         "isAuthorized": False,
     }
 
-    auth_token = event["headers"]["authorization"]
-
     try:
+        auth_token = event.get("headers", {}).get("authorization")
 
         if auth_token:
 
@@ -56,17 +59,28 @@ def handler(event, context):
 
             entityType = event.get("requestContext", {}).get("domainPrefix", "")
             routeKey = event.get("routeKey", "")
+            resourceEntityId = entityType.upper()
+
+            # entityType is derived from the API's custom domain subdomain prefix
+            # (see README for the DNS-to-microservice-name coupling this relies on).
+            # Logged so a mismatch (e.g. a renamed domain) is traceable rather than
+            # silently resolving to a deny.
+            logger.info(
+                "Checking authorization for action=%s resource=OrcaBus::Microservice::%s",
+                routeKey,
+                resourceEntityId,
+            )
 
             avp_response = client.is_authorized_with_token(
                 policyStoreId=os.environ.get("POLICY_STORE_ID"),
                 identityToken=auth_token,
                 action={
-                    "actionType": f"OrcaBus::Action",
+                    "actionType": "OrcaBus::Action",
                     "actionId": routeKey,
                 },
                 resource={
                     "entityType": "OrcaBus::Microservice",
-                    "entityId": entityType.upper(),
+                    "entityId": resourceEntityId,
                 },
             )
 
@@ -75,6 +89,6 @@ def handler(event, context):
             }
         else:
             return response
-    except BaseException as e:
-        print("ERROR: ", e)
+    except Exception as e:
+        logger.error("ERROR: %s", e)
         return response

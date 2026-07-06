@@ -15,9 +15,13 @@ The current stack deploys AWS Verified Permissions, defining an identity source 
   latest token containing the proper Cognito group claims for it to work. This also applies when a user is removed from
   the group; the JWT must expire to become invalid.
 
+  The identity source is restricted to the platform's known Cognito app client IDs
+  (`clientIdParameterNames` in `config.ts`) — tokens minted by other app clients registered
+  under the same user pool are not accepted.
+
 ### Group
 
-Policies are currently assigned based on groups from the Cognito User Pool. The policies are defined in `stack.ts` within the class where the function is named `setup{GROUP_NAME}CedarPolicy`.
+Policies are currently assigned based on groups from the Cognito User Pool. The policies are defined as data in the `GROUP_POLICIES` array in `stack.ts`, and turned into Cedar `CfnPolicy` resources by `setupGroupPolicies`.
 
 - **Admin**: For admins/service users (all actions are granted to this group).
 - **Curators**: For curators (all policies are applied to all curators in this group).
@@ -29,5 +33,17 @@ Policies are currently assigned based on groups from the Cognito User Pool. The 
 | ------------------------------------------------------------------------------------------------- | ------------------ | ------------------ |
 | Allow rerun workflows in the WORKFLOW microservice                                                | :white_check_mark: | :white_check_mark: |
 | Allow to sync external metadata in the METADATA microservice                                      | :x:                | :white_check_mark: |
+| Allow to link external entities to a case in the CASE microservice                                | :white_check_mark: | :white_check_mark: |
+| Allow to unlink external entities from a case in the CASE microservice                            | :white_check_mark: | :white_check_mark: |
 
 `Admin` group will have a wildcard to allow all actions.
+
+NOTE: Please update this table if `GROUP_POLICIES` in `stack.ts` is modified.
+
+### HTTP Lambda Authorizer
+
+The Lambda authorizer maps each request into Cedar terms — the identity token as the
+principal, the route (e.g. `POST /api/v1/workflowrun/{orcabusId}/rerun/{proxy+}`) as the
+action, and the API's domain prefix, uppercased (e.g. `workflow.umccr.org` → `WORKFLOW`), as
+the `OrcaBus::Microservice` resource — then calls AVP's `IsAuthorizedWithToken` to decide
+whether to allow the request.
