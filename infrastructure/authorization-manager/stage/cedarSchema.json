@@ -7,6 +7,18 @@
           "resourceTypes": ["Microservice"]
         }
       },
+      "POST /api/v1/workflowrun/{orcabusId}/deprecated": {
+        "appliesTo": {
+          "principalTypes": ["User", "CognitoUserGroup"],
+          "resourceTypes": ["Microservice"]
+        }
+      },
+      "POST /api/v1/workflowrun/{orcabusId}/resolved": {
+        "appliesTo": {
+          "principalTypes": ["User", "CognitoUserGroup"],
+          "resourceTypes": ["Microservice"]
+        }
+      },
       "POST /api/v1/sync/presigned-csv/{PROXY+}": {
         "appliesTo": {
           "principalTypes": ["User", "CognitoUserGroup"],

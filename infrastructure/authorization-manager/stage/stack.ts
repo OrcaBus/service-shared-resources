@@ -46,6 +46,13 @@ const GROUP_POLICIES: CedarGroupPolicy[] = [
     actions: ['POST /api/v1/workflowrun/{orcabusId}/rerun/{proxy+}'],
     resource: 'WORKFLOW',
   },
+  {
+    id: 'CognitoWorkflowDeprecatePolicy',
+    groups: ['curators'],
+    description: 'Permissions to mark a workflowrun as deprecated in WORKFLOW microservice',
+    actions: ['POST /api/v1/workflowrun/{orcabusId}/deprecated'],
+    resource: 'WORKFLOW',
+  },
   // METADATA resource
   {
     id: 'CognitoBioinfoMetadataModifyPolicy',
