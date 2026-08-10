@@ -7,13 +7,13 @@
           "resourceTypes": ["Microservice"]
         }
       },
-      "POST /api/v1/workflowrun/{orcabusId}/deprecated": {
+      "POST /api/v1/workflowrun/state/deprecate": {
         "appliesTo": {
           "principalTypes": ["User", "CognitoUserGroup"],
           "resourceTypes": ["Microservice"]
         }
       },
-      "POST /api/v1/workflowrun/{orcabusId}/resolved": {
+      "POST /api/v1/workflowrun/state/resolve": {
         "appliesTo": {
           "principalTypes": ["User", "CognitoUserGroup"],
           "resourceTypes": ["Microservice"]

@@ -66,9 +66,9 @@ describe('workflow state transition authorization', () => {
   test('registers only protected workflow state transition actions in the strict Cedar schema', () => {
     const actions = cedarSchemaJson.OrcaBus.actions;
 
-    expect(actions).toHaveProperty('POST /api/v1/workflowrun/{orcabusId}/deprecated');
-    expect(actions).toHaveProperty('POST /api/v1/workflowrun/{orcabusId}/resolved');
-    expect(actions).not.toHaveProperty('POST /api/v1/workflowrun/{orcabusId}/cancel');
+    expect(actions).toHaveProperty('POST /api/v1/workflowrun/state/deprecate');
+    expect(actions).toHaveProperty('POST /api/v1/workflowrun/state/resolve');
+    expect(actions).not.toHaveProperty('POST /api/v1/workflowrun/state/cancel');
   });
 
   test('grants deprecation only to curators among non-admin groups', () => {
@@ -77,7 +77,7 @@ describe('workflow state transition authorization', () => {
     );
 
     expect(policy).toContain('|curators');
-    expect(policy).toContain('POST /api/v1/workflowrun/{orcabusId}/deprecated');
+    expect(policy).toContain('POST /api/v1/workflowrun/state/deprecate');
     expect(policy).toContain('OrcaBus::Microservice::\\"WORKFLOW\\"');
   });
 
@@ -90,7 +90,7 @@ describe('workflow state transition authorization', () => {
     expect(adminPolicy).toContain('|admin');
     expect(adminPolicy).toContain('action,\\n              resource');
     expect(JSON.stringify(nonAdminPolicies)).not.toContain(
-      'POST /api/v1/workflowrun/{orcabusId}/resolved'
+      'POST /api/v1/workflowrun/state/resolve'
     );
   });
 });
