@@ -42,9 +42,9 @@ describe('cdk-nag-authorization-stack', () => {
 
 describe('workflow state transition authorization', () => {
   const workflowStateActions = {
-    cancel: 'POST /api/v1/workflowrun/state/cancel/',
-    deprecate: 'POST /api/v1/workflowrun/state/deprecate/',
-    resolve: 'POST /api/v1/workflowrun/state/resolve/',
+    cancel: 'POST /api/v1/workflowrun/state/cancel/{PROXY+}',
+    deprecate: 'POST /api/v1/workflowrun/state/deprecate/{PROXY+}',
+    resolve: 'POST /api/v1/workflowrun/state/resolve/{PROXY+}',
   } as const;
 
   const app = new App({});
@@ -76,9 +76,13 @@ describe('workflow state transition authorization', () => {
     expect(actions).toHaveProperty(workflowStateActions.resolve);
     expect(actions).not.toHaveProperty(workflowStateActions.cancel);
 
-    for (const action of Object.values(workflowStateActions)) {
-      expect(action).toMatch(/\/$/);
-      expect(actions).not.toHaveProperty(action.slice(0, -1));
+    for (const action of [workflowStateActions.deprecate, workflowStateActions.resolve]) {
+      const proxySuffix = '/{PROXY+}';
+      const baseAction = action.slice(0, -proxySuffix.length);
+
+      expect(action.endsWith(proxySuffix)).toBe(true);
+      expect(actions).not.toHaveProperty(baseAction);
+      expect(actions).not.toHaveProperty(`${baseAction}/`);
     }
   });
 

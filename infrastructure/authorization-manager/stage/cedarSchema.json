@@ -7,13 +7,13 @@
           "resourceTypes": ["Microservice"]
         }
       },
-      "POST /api/v1/workflowrun/state/deprecate/": {
+      "POST /api/v1/workflowrun/state/deprecate/{PROXY+}": {
         "appliesTo": {
           "principalTypes": ["User", "CognitoUserGroup"],
           "resourceTypes": ["Microservice"]
         }
       },
-      "POST /api/v1/workflowrun/state/resolve/": {
+      "POST /api/v1/workflowrun/state/resolve/{PROXY+}": {
         "appliesTo": {
           "principalTypes": ["User", "CognitoUserGroup"],
           "resourceTypes": ["Microservice"]
