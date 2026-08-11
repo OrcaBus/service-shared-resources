@@ -50,7 +50,7 @@ const GROUP_POLICIES: CedarGroupPolicy[] = [
     id: 'CognitoWorkflowDeprecatePolicy',
     groups: ['curators'],
     description: 'Permissions to mark a workflowrun as deprecated in WORKFLOW microservice',
-    actions: ['POST /api/v1/workflowrun/state/deprecate'],
+    actions: ['POST /api/v1/workflowrun/state/deprecate/'],
     resource: 'WORKFLOW',
   },
   // METADATA resource

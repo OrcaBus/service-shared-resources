@@ -39,7 +39,7 @@ Policies are currently assigned based on groups from the Cognito User Pool. The 
 | Allow to unlink external entities from a case in the CASE microservice                            | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 The `Admin` group receives these permissions through its wildcard policy. The unrestricted
-`POST /api/v1/workflowrun/state/cancel` endpoint does not use this authorizer and therefore is not
+`POST /api/v1/workflowrun/state/cancel/` endpoint does not use this authorizer and therefore is not
 represented in the Cedar schema or group policies.
 
 NOTE: Please update this table if `GROUP_POLICIES` in `stack.ts` is modified.
