@@ -29,14 +29,18 @@ Policies are currently assigned based on groups from the Cognito User Pool. The 
 
 ### Permissions
 
-| Description                                                                                       | Curators           | Bioinfo            |
-| ------------------------------------------------------------------------------------------------- | ------------------ | ------------------ |
-| Allow rerun workflows in the WORKFLOW microservice                                                | :white_check_mark: | :white_check_mark: |
-| Allow to sync external metadata in the METADATA microservice                                      | :x:                | :white_check_mark: |
-| Allow to link external entities to a case in the CASE microservice                                | :white_check_mark: | :white_check_mark: |
-| Allow to unlink external entities from a case in the CASE microservice                            | :white_check_mark: | :white_check_mark: |
+| Description                                                                                       | Admin              | Curators           | Bioinfo            |
+| ------------------------------------------------------------------------------------------------- | ------------------ | ------------------ | ------------------ |
+| Allow rerun workflows in the WORKFLOW microservice                                                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Allow marking workflow runs as deprecated in the WORKFLOW microservice                            | :white_check_mark: | :white_check_mark: | :x:                |
+| Allow marking workflow runs as resolved in the WORKFLOW microservice                              | :white_check_mark: | :x:                | :x:                |
+| Allow to sync external metadata in the METADATA microservice                                      | :white_check_mark: | :x:                | :white_check_mark: |
+| Allow to link external entities to a case in the CASE microservice                                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| Allow to unlink external entities from a case in the CASE microservice                            | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
-`Admin` group will have a wildcard to allow all actions.
+The `Admin` group receives these permissions through its wildcard policy. The unrestricted
+`POST /api/v1/workflowrun/state/cancel/` endpoint does not use this authorizer and therefore is not
+represented in the Cedar schema or group policies.
 
 NOTE: Please update this table if `GROUP_POLICIES` in `stack.ts` is modified.
 

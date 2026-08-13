@@ -7,6 +7,18 @@
           "resourceTypes": ["Microservice"]
         }
       },
+      "POST /api/v1/workflowrun/state/deprecate/{PROXY+}": {
+        "appliesTo": {
+          "principalTypes": ["User", "CognitoUserGroup"],
+          "resourceTypes": ["Microservice"]
+        }
+      },
+      "POST /api/v1/workflowrun/state/resolve/{PROXY+}": {
+        "appliesTo": {
+          "principalTypes": ["User", "CognitoUserGroup"],
+          "resourceTypes": ["Microservice"]
+        }
+      },
       "POST /api/v1/sync/presigned-csv/{PROXY+}": {
         "appliesTo": {
           "principalTypes": ["User", "CognitoUserGroup"],

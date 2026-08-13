@@ -1,9 +1,10 @@
 import { App, Aspects, Stack } from 'aws-cdk-lib';
-import { Annotations, Match } from 'aws-cdk-lib/assertions';
+import { Annotations, Match, Template } from 'aws-cdk-lib/assertions';
 import { SynthesisMessage } from 'aws-cdk-lib/cx-api';
 import { AwsSolutionsChecks, NagSuppressions } from 'cdk-nag';
 import { AuthorizationManagerStack } from '../infrastructure/authorization-manager/stage/stack';
 import { getAuthorizationManagerStackProps } from '../infrastructure/authorization-manager/stage/config';
+import cedarSchemaJson from '../infrastructure/authorization-manager/stage/cedarSchema.json';
 
 function synthesisMessageToString(sm: SynthesisMessage): string {
   return `${sm.entry.data} [${sm.id}]`;
@@ -36,6 +37,74 @@ describe('cdk-nag-authorization-stack', () => {
       .findWarning('*', Match.stringLikeRegexp('AwsSolutions-.*'))
       .map(synthesisMessageToString);
     expect(warnings).toHaveLength(0);
+  });
+});
+
+describe('workflow state transition authorization', () => {
+  const workflowStateActions = {
+    cancel: 'POST /api/v1/workflowrun/state/cancel/{PROXY+}',
+    deprecate: 'POST /api/v1/workflowrun/state/deprecate/{PROXY+}',
+    resolve: 'POST /api/v1/workflowrun/state/resolve/{PROXY+}',
+  } as const;
+
+  const app = new App({});
+  const stack = new AuthorizationManagerStack(app, 'WorkflowAuthorizationTestStack', {
+    ...getAuthorizationManagerStackProps('PROD'),
+    env: {
+      account: '123456789',
+      region: 'ap-southeast-2',
+    },
+  });
+  const template = Template.fromStack(stack);
+  const policies = Object.values(
+    template.findResources('AWS::VerifiedPermissions::Policy')
+  ) as Record<string, unknown>[];
+
+  const serializedPolicy = (description: string): string => {
+    const matchingPolicies = policies.filter((policy) =>
+      JSON.stringify(policy).includes(`"Description":"${description}"`)
+    );
+
+    expect(matchingPolicies).toHaveLength(1);
+    return JSON.stringify(matchingPolicies[0]);
+  };
+
+  test('registers only protected workflow state transition actions in the strict Cedar schema', () => {
+    const actions = cedarSchemaJson.OrcaBus.actions;
+
+    expect(actions).toHaveProperty(workflowStateActions.deprecate);
+    expect(actions).toHaveProperty(workflowStateActions.resolve);
+    expect(actions).not.toHaveProperty(workflowStateActions.cancel);
+
+    for (const action of [workflowStateActions.deprecate, workflowStateActions.resolve]) {
+      const proxySuffix = '/{PROXY+}';
+      const baseAction = action.slice(0, -proxySuffix.length);
+
+      expect(action.endsWith(proxySuffix)).toBe(true);
+      expect(actions).not.toHaveProperty(baseAction);
+      expect(actions).not.toHaveProperty(`${baseAction}/`);
+    }
+  });
+
+  test('grants deprecation only to curators among non-admin groups', () => {
+    const policy = serializedPolicy(
+      'Permissions to mark a workflowrun as deprecated in WORKFLOW microservice'
+    );
+
+    expect(policy).toContain('|curators');
+    expect(policy).toContain(workflowStateActions.deprecate);
+    expect(policy).toContain('OrcaBus::Microservice::\\"WORKFLOW\\"');
+  });
+
+  test('keeps resolution admin-only through the admin wildcard policy', () => {
+    const adminPolicy = serializedPolicy('Allow all actions on all resources');
+    const nonAdminPolicies = policies.filter(
+      (policy) => !JSON.stringify(policy).includes('Allow all actions on all resources')
+    );
+
+    expect(adminPolicy).toContain('|admin');
+    expect(adminPolicy).toContain('action,\\n              resource');
+    expect(JSON.stringify(nonAdminPolicies)).not.toContain(workflowStateActions.resolve);
   });
 });
 
